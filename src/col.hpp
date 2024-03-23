@@ -29,6 +29,7 @@ void main_2() {
     InitWindow(screenWidth, screenHeight, "Top Down Collision System");
 
     //Player setup
+    Vector2 previousPlayerPosition = { screenWidth / 2, screenHeight / 2 };
     Vector2 playerPosition = { screenWidth / 2, screenHeight / 2 };
     float playerRadius = 20.0f;
     Color playerColor = BLUE;
@@ -37,14 +38,19 @@ void main_2() {
     std::vector<GameObject> objects;
     GameObject obj1 = { { 200, 200, 100, 100 }, RED };
     GameObject obj2 = { { 400, 300, 150, 50 }, GREEN };
+    GameObject obj3 = { { 100, 300, 400, 50 }, BLUE };
     objects.push_back(obj1);
     objects.push_back(obj2);
+    objects.push_back(obj3);
 
     SetTargetFPS(60); //Set the framerate
 
     //Main game loop
     while (!WindowShouldClose()) {
         //Update
+
+        previousPlayerPosition = playerPosition;
+
         //Player movement
         if (IsKeyDown(KEY_RIGHT)) playerPosition.x += 5.0f;
         else if (IsKeyDown(KEY_LEFT)) playerPosition.x -= 5.0f;
@@ -56,6 +62,7 @@ void main_2() {
             if (CheckCollisionCircleRecThis(playerPosition, playerRadius, obj.bounds)) {
                 //Collision detected! Handle it here
                 playerColor = obj.color; //Change player color on collision
+                playerPosition = previousPlayerPosition;
             }
         }
 

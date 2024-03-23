@@ -15,6 +15,7 @@ namespace vix {
         Rectangle bounds;
         Color color;
         unsigned int policy = policy::COLLIDE;
+        std::string name = "";
     };
 
     bool check_collision_circle_rec_this(Vector2 center, float radius, Rectangle rect) {
@@ -43,14 +44,14 @@ void main_2() {
     //Player setup
     Vector2 previous_player_position = { screen_width / 2, screen_height / 2 };
     Vector2 player_position = { screen_width / 2, screen_height / 2 };
-    float player_radius = 20.0f;
+    float player_radius = 20.0;
     Color player_color = BLUE;
 
     //Bounding box objects setup
     std::vector<vix::game_object> objects;
-    vix::game_object obj1 = { { 200, 200, 100, 100 }, RED };
-    vix::game_object obj2 = { { 400, 300, 150, 50 }, GREEN };
-    vix::game_object obj3 = { { 100, 300, 400, 50 }, BLUE };
+    vix::game_object obj1 = { { 200, 200, 100, 100 }, RED, vix::policy::COLLIDE, "red_box_name" };
+    vix::game_object obj2 = { { 400, 300, 150, 50 }, GREEN, vix::policy::COLLIDE "green_box_name"};
+    vix::game_object obj3 = { { 100, 300, 400, 50 }, BLUE, vix::policy::DETECT, "blue_box_name"};
     objects.push_back(obj1);
     objects.push_back(obj2);
     objects.push_back(obj3);
@@ -64,17 +65,17 @@ void main_2() {
         previous_player_position = player_position;
 
         //Player movement
-        if (IsKeyDown(KEY_RIGHT)) player_position.x += 5.0f;
-        else if (IsKeyDown(KEY_LEFT)) player_position.x -= 5.0f;
-        if (IsKeyDown(KEY_DOWN)) player_position.y += 5.0f;
-        else if (IsKeyDown(KEY_UP)) player_position.y -= 5.0f;
+        if (IsKeyDown(KEY_RIGHT)) player_position.x += 5.0;
+        else if (IsKeyDown(KEY_LEFT)) player_position.x -= 5.0;
+        if (IsKeyDown(KEY_DOWN)) player_position.y += 5.0;
+        else if (IsKeyDown(KEY_UP)) player_position.y -= 5.0;
 
         //Collision detection
         for (const auto& obj : objects) {
             if (vix::check_collision_circle_rec_this(player_position, player_radius, obj.bounds)) {
                 //Collision detected! Handle it here
                 player_color = obj.color; //Change player color on collision
-                player_position = previous_player_position;
+                if(obj.policy==vix::policy::COLLIDE)player_position = previous_player_position;
             }
         }
 

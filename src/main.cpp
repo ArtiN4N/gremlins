@@ -9,10 +9,13 @@ int SCREEN_H = 800;
 struct Entity {
     Vector2 position;
     float radius;
+    float speed;
 
-    void init(float x, float y, float rad) {
+    void init(float x, float y, float rad, float spd) {
         position = {x, y};
         radius = rad;
+
+        speed = spd;
     }
 
     void draw() {
@@ -44,23 +47,31 @@ int main() {
     InitWindow(SCREEN_W, SCREEN_H, "template");
 
     Entity player;
-    player.init(200, 100, 100);
+    player.init(200, 100, 100, 350);
 
     Viewport cam;
     cam.init(&player);
 
     while (!WindowShouldClose()) {
-        //float dt = GetFrameTime();
+        float dt = GetFrameTime();
 
+        // INPUT
+        if (IsKeyDown(KEY_W)) player.position.y -= player.speed * dt;
+        if (IsKeyDown(KEY_A)) player.position.x -= player.speed * dt;
+        if (IsKeyDown(KEY_S)) player.position.y += player.speed * dt;
+        if (IsKeyDown(KEY_D)) player.position.x += player.speed * dt;
+
+        // UPDATE
         cam.update();
 
+        // DRAW
         BeginDrawing();
-
         ClearBackground(BLACK);
-
         BeginMode2D(cam.camera);
 
         player.draw();
+
+        DrawCircle(10, 10, 20, BLUE);
 
         EndMode2D();
         

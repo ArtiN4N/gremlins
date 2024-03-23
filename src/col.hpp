@@ -2,7 +2,10 @@
 #include <cstdlib>
 #include <string>
 #include <cstring>
+#include <cstdlib>
 #include <vector>
+
+#include "Map.hpp"
 
 const int screen_width = 800;
 const int screen_height = 450;
@@ -37,6 +40,24 @@ namespace vix {
         return distance_squared <= (radius * radius);
     }
 
+    void draw_image_and_push_to_vector(const uint32_t image_data[][], int width, int height, std::vector<game_object>& game_objects_list) {
+        //Iterate through the image data and draw rectangles accordingly
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                uint32_t pixel = image_data[0][y * width + x]; // Get pixel color
+
+                //Check if pixel is not transparent
+                if (pixel != 0x00000000) {
+                    //Calculate position and size of the rectangle
+                    Rectangle rect = { static_cast<float>(x * 10), static_cast<float>(y * 10), 10, 10 };
+                    //Create game object and push it to the vector
+                    vix::game_object obj = { rect, ColorFromUInt(pixel), vix::policy::COLLIDE, "pixel_" + std::to_string(x) + "_" + std::to_string(y) };
+                    game_objects_list.push_back(obj);
+                }
+            }
+        }
+    }
+
 
 }
 
@@ -52,12 +73,15 @@ void main_2() {
 
     //Bounding box objects setup
     std::vector<vix::game_object> objects;
+    /*
     vix::game_object obj1 = { { 200, 200, 100, 100 }, RED, vix::policy::COLLIDE, "red_box_name" };
-    vix::game_object obj2 = { { 400, 400, 150, 50 }, GREEN, vix::policy::COLLIDE, "green_box_name"};
+    vix::game_object obj2 = { { 400, 300, 150, 50 }, GREEN, vix::policy::COLLIDE, "green_box_name"};
     vix::game_object obj3 = { { 100, 300, 400, 50 }, BLUE, vix::policy::DETECT, "blue_box_name"};
     objects.push_back(obj1);
     objects.push_back(obj2);
     objects.push_back(obj3);
+    */
+    draw_image_and_push_to_vector(new_piskel_data, NEW_PISKEL_FRAME_WIDTH, NEW_PISKEL_FRAME_HEIGHT, objects);
 
     SetTargetFPS(60); //Set the framerate
 
@@ -91,7 +115,6 @@ void main_2() {
         for (size_t i = 0; i < length; i++) {
             DrawRectangleRec(objects[i].bounds, objects[i].color);
         }
-
         //Draw player
         DrawCircleV(player_position, player_radius, player_color);
 

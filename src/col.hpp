@@ -1,44 +1,47 @@
 #include <algorithm>
 
-const int screenWidth = 800;
-const int screenHeight = 450;
+const int screen_width = 800;
+const int screen_height = 450;
 
-struct GameObject {
+namespace vix {
+
+struct game_object {
     Rectangle bounds;
     Color color;
 };
 
-bool CheckCollisionCircleRecThis(Vector2 center, float radius, Rectangle rect) {
-    Vector2 closestPoint;
-    closestPoint.x = std::clamp(center.x, rect.x, rect.x + rect.width);
-    closestPoint.y = std::clamp(center.y, rect.y, rect.y + rect.height);
+bool check_collision_circle_rec_this(Vector2 center, float radius, Rectangle rect) {
+    Vector2 closest_point;
+    closest_point.x = std::clamp(center.x, rect.x, rect.x + rect.width);
+    closest_point.y = std::clamp(center.y, rect.y, rect.y + rect.height);
 
     //Subtracting the two vectors
     Vector2 distance;
-    distance.x = center.x - closestPoint.x;
-    distance.y = center.y - closestPoint.y;
+    distance.x = center.x - closest_point.x;
+    distance.y = center.y - closest_point.y;
 
     //Calculating the squared distance
-    float distanceSquared = (distance.x * distance.x) + (distance.y * distance.y);
+    float distance_squared = (distance.x * distance.x) + (distance.y * distance.y);
 
-    return distanceSquared <= (radius * radius);
+    return distance_squared <= (radius * radius);
+}
 }
 
 void main_2() {
     //Initialization
-    InitWindow(screenWidth, screenHeight, "Top Down Collision System");
+    InitWindow(screen_width, screen_height, "Top Down Collision System");
 
     //Player setup
-    Vector2 previousPlayerPosition = { screenWidth / 2, screenHeight / 2 };
-    Vector2 playerPosition = { screenWidth / 2, screenHeight / 2 };
-    float playerRadius = 20.0f;
-    Color playerColor = BLUE;
+    Vector2 previous_player_position = { screen_width / 2, screen_height / 2 };
+    Vector2 player_position = { screen_width / 2, screen_height / 2 };
+    float player_radius = 20.0f;
+    Color player_color = BLUE;
 
     //Bounding box objects setup
-    std::vector<GameObject> objects;
-    GameObject obj1 = { { 200, 200, 100, 100 }, RED };
-    GameObject obj2 = { { 400, 300, 150, 50 }, GREEN };
-    GameObject obj3 = { { 100, 300, 400, 50 }, BLUE };
+    std::vector<vix::game_object> objects;
+    vix::game_object obj1 = { { 200, 200, 100, 100 }, RED };
+    vix::game_object obj2 = { { 400, 300, 150, 50 }, GREEN };
+    vix::game_object obj3 = { { 100, 300, 400, 50 }, BLUE };
     objects.push_back(obj1);
     objects.push_back(obj2);
     objects.push_back(obj3);
@@ -49,20 +52,20 @@ void main_2() {
     while (!WindowShouldClose()) {
         //Update
 
-        previousPlayerPosition = playerPosition;
+        previous_player_position = player_position;
 
         //Player movement
-        if (IsKeyDown(KEY_RIGHT)) playerPosition.x += 5.0f;
-        else if (IsKeyDown(KEY_LEFT)) playerPosition.x -= 5.0f;
-        if (IsKeyDown(KEY_DOWN)) playerPosition.y += 5.0f;
-        else if (IsKeyDown(KEY_UP)) playerPosition.y -= 5.0f;
+        if (IsKeyDown(KEY_RIGHT)) player_position.x += 5.0f;
+        else if (IsKeyDown(KEY_LEFT)) player_position.x -= 5.0f;
+        if (IsKeyDown(KEY_DOWN)) player_position.y += 5.0f;
+        else if (IsKeyDown(KEY_UP)) player_position.y -= 5.0f;
 
         //Collision detection
         for (const auto& obj : objects) {
-            if (CheckCollisionCircleRecThis(playerPosition, playerRadius, obj.bounds)) {
+            if (vix::check_collision_circle_rec_this(player_position, player_radius, obj.bounds)) {
                 //Collision detected! Handle it here
-                playerColor = obj.color; //Change player color on collision
-                playerPosition = previousPlayerPosition;
+                player_color = obj.color; //Change player color on collision
+                player_position = previous_player_position;
             }
         }
 
@@ -76,7 +79,7 @@ void main_2() {
         }
 
         //Draw player
-        DrawCircleV(playerPosition, playerRadius, playerColor);
+        DrawCircleV(player_position, player_radius, player_color);
 
         EndDrawing();
     }

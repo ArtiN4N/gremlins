@@ -1,5 +1,7 @@
 #include <algorithm>
 #include <cstdlib>
+#include <string>
+#include <cstring>
 
 const int screen_width = 800;
 const int screen_height = 450;
@@ -50,7 +52,7 @@ void main_2() {
     //Bounding box objects setup
     std::vector<vix::game_object> objects;
     vix::game_object obj1 = { { 200, 200, 100, 100 }, RED, vix::policy::COLLIDE, "red_box_name" };
-    vix::game_object obj2 = { { 400, 300, 150, 50 }, GREEN, vix::policy::COLLIDE "green_box_name"};
+    vix::game_object obj2 = { { 400, 300, 150, 50 }, GREEN, vix::policy::COLLIDE, "green_box_name"};
     vix::game_object obj3 = { { 100, 300, 400, 50 }, BLUE, vix::policy::DETECT, "blue_box_name"};
     objects.push_back(obj1);
     objects.push_back(obj2);
@@ -71,11 +73,12 @@ void main_2() {
         else if (IsKeyDown(KEY_UP)) player_position.y -= 5.0;
 
         //Collision detection
-        for (const auto& obj : objects) {
-            if (vix::check_collision_circle_rec_this(player_position, player_radius, obj.bounds)) {
+        size_t length = objects.size();
+        for (size_t i = 0; i < length; i++) {
+            if (vix::check_collision_circle_rec_this(player_position, player_radius, objects[i].bounds)) {
                 //Collision detected! Handle it here
-                player_color = obj.color; //Change player color on collision
-                if(obj.policy==vix::policy::COLLIDE)player_position = previous_player_position;
+                player_color = objects[i].color; //Change player color on collision
+                if(objects[i].policy==vix::policy::COLLIDE)player_position = previous_player_position;
             }
         }
 
@@ -84,8 +87,8 @@ void main_2() {
         ClearBackground(RAYWHITE);
 
         //Draw bounding box objects
-        for (const auto& obj : objects) {
-            DrawRectangleRec(obj.bounds, obj.color);
+        for (size_t i = 0; i < length; i++) {
+            DrawRectangleRec(objects[i].bounds, objects[i].color);
         }
 
         //Draw player

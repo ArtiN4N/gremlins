@@ -10,6 +10,8 @@ struct AttackBox {
     Vector2 size;
     Vector2 realSize;
 
+    bool projectile;
+
     bool active;
     bool ready;
 
@@ -17,12 +19,14 @@ struct AttackBox {
     float maxActive;
     float maxCooldown;
 
-    void init(float width, float height, float mActive, float mCool) {
+    void init(float width, float height, float mActive, float mCool, bool proj) {
         size = {width, height};
         realSize = size;
 
         active = false;
         ready = true;
+
+        projectile = proj;
 
         elapsed = 0.f;
         maxActive = mActive;
@@ -30,6 +34,10 @@ struct AttackBox {
     }
 
     void update(Direction parentDir, float parentRad, float dt) {
+        if (projectile) {
+            offset = { -realSize.x / 2.f, -realSize.y / 2.f };
+            return;
+        }
         switch (parentDir) {
             case NORTH:
                 realSize = size;

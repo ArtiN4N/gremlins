@@ -17,15 +17,26 @@ struct Game {
 
     void init() {
         player.init(200, 100, 25, 350);
+        playerInitAttacks(&player);
+        
         cam.init(&player);
     }
 
     void input(float dt) {
-        playerInputHandle(&player, dt);
+        playerInputHandle(&player, &projectileList, dt);
     }
 
     void update(float dt) {
+        for (Entity e : projectileList) {
+            e.update(dt);
+        }
+
+        for (Entity e : enemyList) {
+            e.update(dt);
+        }
+
         player.update(dt);
+
         cam.update();
     }
 
@@ -34,6 +45,14 @@ struct Game {
         BeginMode2D(cam.camera);
 
         DrawCircle(10, 10, 20, BLUE);
+
+        for (Entity e : projectileList) {
+            e.draw();
+        }
+
+        for (Entity e : enemyList) {
+            e.draw();
+        }
 
         player.draw();
 

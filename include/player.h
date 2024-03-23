@@ -4,7 +4,14 @@
 #include "raylib.h"
 #include "entity.h"
 
-void playerInputHandle(Entity* player, float dt) {
+#include <vector>
+
+
+void playerInitAttacks(Entity* player) {
+    player->attack.init(70, 50, .3f, .05f, false);
+}
+
+void playerInputHandle(Entity* player, std::vector<Entity>* projectileList, float dt) {
     if (IsKeyDown(KEY_LEFT)) {
         player->position.x -= player->speed * dt;
         player->dir = WEST;
@@ -41,5 +48,13 @@ void playerInputHandle(Entity* player, float dt) {
         }
 
         player->dashTrace = 3000;
+    }
+
+    if (IsKeyPressed(KEY_C)) {
+        Entity arrow;
+        arrow.init(player->position.x, player->position.y, 5, 1000);
+        arrow.attack.init(10, 10, -1.f, .0f, true);
+
+        projectileList->push_back(arrow);
     }
 }

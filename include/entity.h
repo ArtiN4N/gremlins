@@ -29,8 +29,6 @@ struct Entity {
         speed = spd;
 
         dir = NORTH;
-
-        attack.init(70, 50, .3f, .05f);
     }
 
     void update(float dt) {

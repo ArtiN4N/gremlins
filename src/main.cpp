@@ -3,8 +3,12 @@
 
 #include <stdio.h>
 
+#include "col.hpp"
+
 int main() {
     SetConfigFlags(FLAG_VSYNC_HINT);
+    main_2();
+    /*
     InitWindow(SCREEN_W, SCREEN_H, "template");
 
     Game game;
@@ -22,5 +26,6 @@ int main() {
     }
 
     CloseWindow();
+    */
     return 0;
 }

@@ -1,6 +1,7 @@
 #include <../include/raylib.h>
 #include <../include/defs.h>
 #include <stdio.h>
+#include <cmath>
 
 int SCREEN_W = 1600;
 int SCREEN_H = 800;
@@ -78,6 +79,8 @@ struct AttackBox {
 
 struct Entity {
     Vector2 position;
+    Vector2 velocity;
+
     float radius;
     float speed;
 
@@ -87,6 +90,8 @@ struct Entity {
 
     void init(float x, float y, float rad, float spd) {
         position = {x, y};
+        velocity = { 0.f, 0.f };
+
         radius = rad;
 
         speed = spd;
@@ -98,26 +103,56 @@ struct Entity {
 
     void update(float dt) {
         
-        if (IsKeyDown(KEY_A)) {
+        if (IsKeyDown(KEY_LEFT)) {
             position.x -= speed * dt;
             dir = WEST;
         }
-        if (IsKeyDown(KEY_D)) {
+        if (IsKeyDown(KEY_RIGHT)) {
             position.x += speed * dt;
             dir = EAST;
         }
-        if (IsKeyDown(KEY_W)) {
+        if (IsKeyDown(KEY_UP)) {
             position.y -= speed * dt;
             dir = NORTH;
         }
-        if (IsKeyDown(KEY_S)) {
+        if (IsKeyDown(KEY_DOWN)) {
             position.y += speed * dt;
             dir = SOUTH;
         }
 
-        if (IsKeyPressed(KEY_SPACE) && attack.ready) attack.active = true;
+        if (IsKeyPressed(KEY_Z) && attack.ready) attack.active = true;
+
+        if (IsKeyPressed(KEY_X)) {
+            switch (dir) {
+                case NORTH:
+                    velocity.y += -3000;
+                    break;
+                case EAST:
+                    velocity.x += 3000;
+                    break;
+                case SOUTH:
+                    velocity.y += 3000;
+                    break;
+                case WEST:
+                    velocity.x += -3000;
+                    break;
+            }
+        }
 
         attack.update(dir, radius, dt);
+
+        position.x += velocity.x * dt;
+        position.y += velocity.y * dt;
+
+        float f = .0005f;
+        velocity.x *= pow(f, dt);
+        velocity.y *= pow(f, dt);
+
+        if (velocity.x > 0.f && velocity.x < .05f) velocity.x = 0.f;
+        if (velocity.x < 0.f && velocity.x > -.05f) velocity.x = 0.f;
+
+        if (velocity.y > 0.f && velocity.y < .05f) velocity.y = 0.f;
+        if (velocity.y < 0.f && velocity.y > -.05f) velocity.y = 0.f;
     }
 
     void draw() {

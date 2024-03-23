@@ -23,9 +23,27 @@ struct Entity {
     }
 };
 
+struct AttackBox {
+    Entity* parent;
+    Vector2 offset;
+
+    Vector2 size;
+
+    void init(Entity* follow, float offX, float offY, float width, float height) {
+        parent = follow;
+        offset = {offX, offY};
+        size = {width, height};
+    }
+
+    void debugDraw() {
+        Vector2 drawPos = { parent->position.x + offset.x, parent->position.y + offset.y };
+        DrawRectangleV(drawPos, size, {0, 0, 255, 120});
+    }
+};
+
 struct Viewport {
     Camera2D camera;
-    Entity* follow;
+    Entity* parent;
 
     void init(Entity* following) {
         camera = {0};
@@ -34,11 +52,11 @@ struct Viewport {
         camera.rotation = 0.f;
         camera.zoom = 1.f;
 
-        follow = following;
+        parent = following;
     }
 
     void update() {
-        camera.target = follow->position;
+        camera.target = parent->position;
     }
 };
 
@@ -51,6 +69,9 @@ int main() {
 
     Viewport cam;
     cam.init(&player);
+
+    AttackBox example;
+    example.init(&player, -15, -(30+100), 30, 30);
 
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
@@ -70,6 +91,7 @@ int main() {
         BeginMode2D(cam.camera);
 
         player.draw();
+        example.debugDraw();
 
         DrawCircle(10, 10, 20, BLUE);
 

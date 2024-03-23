@@ -1,30 +1,39 @@
 #include <algorithm>
+#include <cstdlib>
 
 const int screen_width = 800;
 const int screen_height = 450;
 
 namespace vix {
 
-struct game_object {
-    Rectangle bounds;
-    Color color;
-};
+    enum policy {
+        COLLIDE,
+        DETECT
+    };
 
-bool check_collision_circle_rec_this(Vector2 center, float radius, Rectangle rect) {
-    Vector2 closest_point;
-    closest_point.x = std::clamp(center.x, rect.x, rect.x + rect.width);
-    closest_point.y = std::clamp(center.y, rect.y, rect.y + rect.height);
+    struct game_object {
+        Rectangle bounds;
+        Color color;
+        unsigned int policy = policy::COLLIDE;
+    };
 
-    //Subtracting the two vectors
-    Vector2 distance;
-    distance.x = center.x - closest_point.x;
-    distance.y = center.y - closest_point.y;
+    bool check_collision_circle_rec_this(Vector2 center, float radius, Rectangle rect) {
+        Vector2 closest_point;
+        closest_point.x = std::clamp(center.x, rect.x, rect.x + rect.width);
+        closest_point.y = std::clamp(center.y, rect.y, rect.y + rect.height);
 
-    //Calculating the squared distance
-    float distance_squared = (distance.x * distance.x) + (distance.y * distance.y);
+        //Subtracting the two vectors
+        Vector2 distance;
+        distance.x = center.x - closest_point.x;
+        distance.y = center.y - closest_point.y;
 
-    return distance_squared <= (radius * radius);
-}
+        //Calculating the squared distance
+        float distance_squared = (distance.x * distance.x) + (distance.y * distance.y);
+
+        return distance_squared <= (radius * radius);
+    }
+
+
 }
 
 void main_2() {

@@ -53,7 +53,8 @@ void playerInputHandle(Entity* player, std::vector<Entity>* projectileList, floa
     if (IsKeyPressed(KEY_C)) {
         Entity arrow;
         arrow.init(player->position.x, player->position.y, 5, 1000);
-        arrow.attack.init(10, 10, -1.f, .0f, true);
+        arrow.attack.init(10, 100, 1.f, .0f, true);
+        arrow.initProj(player->dir);
 
         projectileList->push_back(arrow);
     }

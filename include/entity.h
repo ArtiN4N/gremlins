@@ -31,11 +31,34 @@ struct Entity {
         dir = NORTH;
     }
 
-    void update(float dt) {
-        attack.update(dir, radius, dt);
+    void initProj(Direction direction) {
+        if (!attack.projectile) return;
+
+        dir = direction;
+
+        switch (dir) {
+            case NORTH:
+                velocity.y = -speed;
+                break;
+            case SOUTH:
+                velocity.y = speed;
+                break;
+            case WEST:
+                velocity.x = -speed;
+                break;
+            case EAST:
+                velocity.x = speed;
+                break;
+        }
+    }
+
+    bool update(float dt) {
+        bool ret = attack.update(dir, radius, dt);
 
         position.x += velocity.x * dt;
         position.y += velocity.y * dt;
+
+        if (attack.projectile) return ret;
 
         float f = .0005f;
         velocity.x *= pow(f, dt);
@@ -50,6 +73,8 @@ struct Entity {
 
         if (dashTrace > 0.f && dashTrace < 50.f) dashTrace = 0.f;
         if (dashTrace < 0.f && dashTrace > -50.f) dashTrace = 0.f;
+
+        return ret;
     }
 
     void draw() {

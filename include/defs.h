@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 int SCREEN_W = 1600;
 int SCREEN_H = 800;
 
@@ -33,11 +35,38 @@ struct AttackBox {
         maxCooldown = mCool;
     }
 
-    void update(Direction parentDir, float parentRad, float dt) {
+    bool update(Direction parentDir, float parentRad, float dt) {
         if (projectile) {
-            offset = { -realSize.x / 2.f, -realSize.y / 2.f };
-            return;
+            
+            switch (parentDir) {
+                case NORTH:
+                    realSize = size;
+                    offset = { -realSize.x / 2.f, -realSize.y / 2.f };
+                    break;
+                case EAST:
+                    realSize = {size.y, size.x};
+                    offset = { -realSize.x / 2.f, -realSize.y / 2.f };
+                    break;
+                case SOUTH:
+                    realSize = size;
+                    offset = { -realSize.x / 2.f, -realSize.y / 2.f };
+                    break;
+                case WEST:
+                    realSize = {size.y, size.x};
+                    offset = { -realSize.x / 2.f, -realSize.y / 2.f };
+                    break;
+            }
+
+            active = true;
+
+            elapsed += dt;
+
+            if (elapsed > maxActive) {
+                return false;
+            }
+            return true;
         }
+
         switch (parentDir) {
             case NORTH:
                 realSize = size;
@@ -72,6 +101,8 @@ struct AttackBox {
             elapsed = 0.f;
             active = false;
         }
+
+        return true;
     }
 
     void debugDraw(Vector2 parentPos) {

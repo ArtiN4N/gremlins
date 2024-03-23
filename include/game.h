@@ -27,12 +27,26 @@ struct Game {
     }
 
     void update(float dt) {
-        for (Entity e : projectileList) {
-            e.update(dt);
+        for (auto iter = projectileList.begin(); iter != projectileList.end(); iter++) {
+            int index = std::distance(projectileList.begin(), iter);
+
+            bool alive = projectileList[index].update(dt);
+            
+            if (!alive) {
+                projectileList.erase(projectileList.begin() + index);
+                iter--;
+            }
         }
 
-        for (Entity e : enemyList) {
-            e.update(dt);
+        for (auto iter = enemyList.begin(); iter != enemyList.end(); iter++) {
+            int index = std::distance(projectileList.begin(), iter);
+
+            bool alive = enemyList[index].update(dt);
+            
+            if (!alive) {
+                enemyList.erase(enemyList.begin() + index);
+                iter--;
+            }
         }
 
         player.update(dt);

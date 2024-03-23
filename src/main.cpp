@@ -93,7 +93,7 @@ struct Entity {
 
         dir = NORTH;
 
-        attack.init(200, 50, .7f, .2f);
+        attack.init(70, 50, .3f, .05f);
     }
 
     void update(float dt) {

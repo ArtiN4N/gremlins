@@ -12,12 +12,26 @@ struct AttackBox {
     Vector2 size;
     Vector2 realSize;
 
-    void init(float width, float height) {
+    bool active;
+    bool ready;
+
+    float elapsed;
+    float maxActive;
+    float maxCooldown;
+
+    void init(float width, float height, float mActive, float mCool) {
         size = {width, height};
         realSize = size;
+
+        active = false;
+        ready = true;
+
+        elapsed = 0.f;
+        maxActive = mActive;
+        maxCooldown = mCool;
     }
 
-    void update(Direction parentDir, float parentRad) {
+    void update(Direction parentDir, float parentRad, float dt) {
         switch (parentDir) {
             case NORTH:
                 realSize = size;
@@ -36,11 +50,28 @@ struct AttackBox {
                 offset = { -(realSize.x + parentRad), -realSize.y / 2.f };
                 break;
         }
+
+        if (active) {
+            ready = false;
+            elapsed += dt;
+        }
+        else if (!ready) elapsed += dt;
+        
+        if (!active && !ready && elapsed >= maxCooldown) {
+            elapsed = 0.f;
+            ready = true;
+        }
+
+        if (active && elapsed >= maxActive) {
+            elapsed = 0.f;
+            active = false;
+        }
     }
 
     void debugDraw(Vector2 parentPos) {
-        Vector2 drawPos = { parentPos.x + offset.x, parentPos.y + offset.y };
+        if (!active) return;
 
+        Vector2 drawPos = { parentPos.x + offset.x, parentPos.y + offset.y };
         DrawRectangleV(drawPos, realSize, {0, 0, 255, 120});
     }
 };
@@ -62,7 +93,7 @@ struct Entity {
 
         dir = NORTH;
 
-        attack.init(200, 50);
+        attack.init(200, 50, .7f, .2f);
     }
 
     void update(float dt) {
@@ -84,7 +115,9 @@ struct Entity {
             dir = SOUTH;
         }
 
-        attack.update(dir, radius);
+        if (IsKeyPressed(KEY_SPACE) && attack.ready) attack.active = true;
+
+        attack.update(dir, radius, dt);
     }
 
     void draw() {
@@ -139,8 +172,10 @@ int main() {
         player.draw();
 
         EndMode2D();
+
+        DrawText(TextFormat("elapsed: %.2f\n active: %d\n ready: %d", player.attack.elapsed, player.attack.active, player.attack.ready), 10, 40, 20, WHITE);
         
-        DrawFPS(20, 20);
+        DrawFPS(10, 10);
 
         EndDrawing();
     }

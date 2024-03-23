@@ -34,45 +34,6 @@ struct Entity {
     }
 
     void update(float dt) {
-        
-        if (IsKeyDown(KEY_LEFT)) {
-            position.x -= speed * dt;
-            dir = WEST;
-        }
-        if (IsKeyDown(KEY_RIGHT)) {
-            position.x += speed * dt;
-            dir = EAST;
-        }
-        if (IsKeyDown(KEY_UP)) {
-            position.y -= speed * dt;
-            dir = NORTH;
-        }
-        if (IsKeyDown(KEY_DOWN)) {
-            position.y += speed * dt;
-            dir = SOUTH;
-        }
-
-        if (IsKeyPressed(KEY_Z) && attack.ready) attack.active = true;
-
-        if (IsKeyPressed(KEY_X) && dashTrace == 0.f && !attack.active) {
-            switch (dir) {
-                case NORTH:
-                    velocity.y += -3000;
-                    break;
-                case EAST:
-                    velocity.x += 3000;
-                    break;
-                case SOUTH:
-                    velocity.y += 3000;
-                    break;
-                case WEST:
-                    velocity.x += -3000;
-                    break;
-            }
-
-            dashTrace = 3000;
-        }
-
         attack.update(dir, radius, dt);
 
         position.x += velocity.x * dt;

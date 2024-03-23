@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdint.h>
 
 #define NEW_PISKEL_FRAME_COUNT 1

@@ -1,7 +1,7 @@
 #include <../include/raylib.h>
 #include <../include/defs.h>
 #include <stdio.h>
-#include <cmath>
+    #include <cmath>
 
 int SCREEN_W = 1600;
 int SCREEN_H = 800;
@@ -81,6 +81,8 @@ struct Entity {
     Vector2 position;
     Vector2 velocity;
 
+    float dashTrace;
+
     float radius;
     float speed;
 
@@ -91,6 +93,8 @@ struct Entity {
     void init(float x, float y, float rad, float spd) {
         position = {x, y};
         velocity = { 0.f, 0.f };
+
+        dashTrace = 0.f;
 
         radius = rad;
 
@@ -122,7 +126,7 @@ struct Entity {
 
         if (IsKeyPressed(KEY_Z) && attack.ready) attack.active = true;
 
-        if (IsKeyPressed(KEY_X)) {
+        if (IsKeyPressed(KEY_X) && dashTrace == 0.f) {
             switch (dir) {
                 case NORTH:
                     velocity.y += -3000;
@@ -137,6 +141,8 @@ struct Entity {
                     velocity.x += -3000;
                     break;
             }
+
+            dashTrace = 3000;
         }
 
         attack.update(dir, radius, dt);
@@ -147,12 +153,16 @@ struct Entity {
         float f = .0005f;
         velocity.x *= pow(f, dt);
         velocity.y *= pow(f, dt);
+        dashTrace *= pow(f, dt);
 
-        if (velocity.x > 0.f && velocity.x < .05f) velocity.x = 0.f;
-        if (velocity.x < 0.f && velocity.x > -.05f) velocity.x = 0.f;
+        if (velocity.x > 0.f && velocity.x < 50.f) velocity.x = 0.f;
+        if (velocity.x < 0.f && velocity.x > -50.f) velocity.x = 0.f;
 
-        if (velocity.y > 0.f && velocity.y < .05f) velocity.y = 0.f;
-        if (velocity.y < 0.f && velocity.y > -.05f) velocity.y = 0.f;
+        if (velocity.y > 0.f && velocity.y < 50.f) velocity.y = 0.f;
+        if (velocity.y < 0.f && velocity.y > -50.f) velocity.y = 0.f;
+
+        if (dashTrace > 0.f && dashTrace < 50.f) dashTrace = 0.f;
+        if (dashTrace < 0.f && dashTrace > -50.f) dashTrace = 0.f;
     }
 
     void draw() {
@@ -208,7 +218,7 @@ int main() {
 
         EndMode2D();
 
-        DrawText(TextFormat("elapsed: %.2f\n active: %d\n ready: %d", player.attack.elapsed, player.attack.active, player.attack.ready), 10, 40, 20, WHITE);
+        DrawText(TextFormat("elapsed: %.2f\n active: %d\n ready: %d\n player vel: { %.2f, %.2f }", player.attack.elapsed, player.attack.active, player.attack.ready, player.velocity.x, player.velocity.y), 10, 40, 10, WHITE);
         
         DrawFPS(10, 10);
 

@@ -1,5 +1,7 @@
 #pragma once
 
+int SCREEN_W = 1600;
+int SCREEN_H = 800;
 
 enum Direction { NORTH = 0, EAST, SOUTH, WEST };
 

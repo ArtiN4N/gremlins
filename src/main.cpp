@@ -5,9 +5,6 @@
 #include <stdio.h>
 #include <cmath>
 
-int SCREEN_W = 1600;
-int SCREEN_H = 800;
-
 
 
 

@@ -2,6 +2,8 @@
 #include <../include/defs.h>
 #include <stdio.h>
 
+#include "col.hpp"
+
 int SCREEN_W = 1600;
 int SCREEN_H = 800;
 
@@ -16,6 +18,8 @@ struct Entity {
 
 int main() {
     SetConfigFlags(FLAG_VSYNC_HINT);
+    main_2();
+    /*
     InitWindow(SCREEN_W, SCREEN_H, "template");
 
     Entity player;
@@ -36,5 +40,6 @@ int main() {
     }
 
     CloseWindow();
+    */
     return 0;
 }

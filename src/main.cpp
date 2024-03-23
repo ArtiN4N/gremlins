@@ -126,7 +126,7 @@ struct Entity {
 
         if (IsKeyPressed(KEY_Z) && attack.ready) attack.active = true;
 
-        if (IsKeyPressed(KEY_X) && dashTrace == 0.f) {
+        if (IsKeyPressed(KEY_X) && dashTrace == 0.f && !attack.active) {
             switch (dir) {
                 case NORTH:
                     velocity.y += -3000;

@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <string>
 #include <cstring>
+#include <vector>
 
 const int screen_width = 800;
 const int screen_height = 450;
@@ -52,7 +53,7 @@ void main_2() {
     //Bounding box objects setup
     std::vector<vix::game_object> objects;
     vix::game_object obj1 = { { 200, 200, 100, 100 }, RED, vix::policy::COLLIDE, "red_box_name" };
-    vix::game_object obj2 = { { 400, 300, 150, 50 }, GREEN, vix::policy::COLLIDE, "green_box_name"};
+    vix::game_object obj2 = { { 400, 400, 150, 50 }, GREEN, vix::policy::COLLIDE, "green_box_name"};
     vix::game_object obj3 = { { 100, 300, 400, 50 }, BLUE, vix::policy::DETECT, "blue_box_name"};
     objects.push_back(obj1);
     objects.push_back(obj2);

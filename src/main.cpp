@@ -5,39 +5,91 @@
 int SCREEN_W = 1600;
 int SCREEN_H = 800;
 
+enum Direction { NORTH = 0, EAST, SOUTH, WEST };
+
+struct AttackBox {
+    Vector2 offset;
+    Vector2 size;
+    Vector2 realSize;
+
+    void init(float width, float height) {
+        size = {width, height};
+        realSize = size;
+    }
+
+    void update(Direction parentDir, float parentRad) {
+        switch (parentDir) {
+            case NORTH:
+                realSize = size;
+                offset = { -realSize.x / 2.f, -(realSize.y + parentRad) };
+                break;
+            case EAST:
+                realSize = {size.y, size.x};
+                offset = { parentRad, -realSize.y / 2.f };
+                break;
+            case SOUTH:
+                realSize = size;
+                offset = { -realSize.x / 2.f, parentRad };
+                break;
+            case WEST:
+                realSize = {size.y, size.x};
+                offset = { -(realSize.x + parentRad), -realSize.y / 2.f };
+                break;
+        }
+    }
+
+    void debugDraw(Vector2 parentPos) {
+        Vector2 drawPos = { parentPos.x + offset.x, parentPos.y + offset.y };
+
+        DrawRectangleV(drawPos, realSize, {0, 0, 255, 120});
+    }
+};
 
 struct Entity {
     Vector2 position;
     float radius;
     float speed;
 
+    Direction dir;
+
+    AttackBox attack;
+
     void init(float x, float y, float rad, float spd) {
         position = {x, y};
         radius = rad;
 
         speed = spd;
+
+        dir = NORTH;
+
+        attack.init(200, 50);
+    }
+
+    void update(float dt) {
+        
+        if (IsKeyDown(KEY_A)) {
+            position.x -= speed * dt;
+            dir = WEST;
+        }
+        if (IsKeyDown(KEY_D)) {
+            position.x += speed * dt;
+            dir = EAST;
+        }
+        if (IsKeyDown(KEY_W)) {
+            position.y -= speed * dt;
+            dir = NORTH;
+        }
+        if (IsKeyDown(KEY_S)) {
+            position.y += speed * dt;
+            dir = SOUTH;
+        }
+
+        attack.update(dir, radius);
     }
 
     void draw() {
         DrawCircleV(position, radius, RED);
-    }
-};
-
-struct AttackBox {
-    Entity* parent;
-    Vector2 offset;
-
-    Vector2 size;
-
-    void init(Entity* follow, float offX, float offY, float width, float height) {
-        parent = follow;
-        offset = {offX, offY};
-        size = {width, height};
-    }
-
-    void debugDraw() {
-        Vector2 drawPos = { parent->position.x + offset.x, parent->position.y + offset.y };
-        DrawRectangleV(drawPos, size, {0, 0, 255, 120});
+        attack.debugDraw(position);
     }
 };
 
@@ -65,24 +117,16 @@ int main() {
     InitWindow(SCREEN_W, SCREEN_H, "template");
 
     Entity player;
-    player.init(200, 100, 100, 350);
+    player.init(200, 100, 25, 350);
 
     Viewport cam;
     cam.init(&player);
 
-    AttackBox example;
-    example.init(&player, -15, -(30+100), 30, 30);
-
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
 
-        // INPUT
-        if (IsKeyDown(KEY_W)) player.position.y -= player.speed * dt;
-        if (IsKeyDown(KEY_A)) player.position.x -= player.speed * dt;
-        if (IsKeyDown(KEY_S)) player.position.y += player.speed * dt;
-        if (IsKeyDown(KEY_D)) player.position.x += player.speed * dt;
-
         // UPDATE
+        player.update(dt);
         cam.update();
 
         // DRAW
@@ -90,10 +134,9 @@ int main() {
         ClearBackground(BLACK);
         BeginMode2D(cam.camera);
 
-        player.draw();
-        example.debugDraw();
-
         DrawCircle(10, 10, 20, BLUE);
+
+        player.draw();
 
         EndMode2D();
         

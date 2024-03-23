@@ -41,16 +41,16 @@ namespace vix {
     }
 
     void draw_image_and_push_to_vector(const uint32_t image_data[][1024], int width, int height, std::vector<game_object>& game_objects_list) {
-        //Iterate through the image data and draw rectangles accordingly
+        //iterate through the image data and draw rectangles
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                uint32_t pixel = image_data[0][y * width + x]; // Get pixel color
+                uint32_t pixel = image_data[0][y * width + x]; //Get pixel color
 
                 //Check if pixel is not transparent
                 if (pixel != 0x00000000) {
-                    //Calculate position and size of the rectangle
+                    //calculate position and size of the rectangle
                     Rectangle rect = { static_cast<float>(x * 100), static_cast<float>(y * 100), 100, 100 };
-                    //Create game object and push it to the vector
+                    //Create game o bject and push it to the vector
                     vix::game_object obj = { rect, BLUE, vix::policy::COLLIDE, "pixel_" + std::to_string(x) + "_" + std::to_string(y) };
                     game_objects_list.push_back(obj);
                 }

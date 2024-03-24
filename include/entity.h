@@ -25,6 +25,8 @@ struct Entity {
 
     AttackBox attack;
 
+    Texture2D* tex;
+
     void init(float x, float y, float rad, float spd) {
         position = {x, y};
 
@@ -181,7 +183,17 @@ struct Entity {
     }
 
     void draw() {
+        Texture2D drawing = *tex;
+        Rectangle sourceRec = { 0.0f, 0.0f, (float) drawing.width, (float) drawing.height };
+
+        Rectangle destRec = { position.x, position.y - 10, radius * 3, radius * 3 };
         DrawCircleV(position, radius, RED);
+        // draw backgroudd img scaled to the screen size
+        DrawTexturePro(drawing, sourceRec, destRec, { radius * 3/2, radius * 3/2 }, 0.f, WHITE);
+
+        
+
+
         attack.debugDraw(position);
     }
 };

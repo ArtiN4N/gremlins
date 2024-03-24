@@ -13,6 +13,8 @@
 
 struct Game {
     Entity player;
+    PlayerSprites playerSprites;
+
     Viewport cam;
     Texture2D menuImage;
     Texture2D mapImage;
@@ -22,8 +24,10 @@ struct Game {
     std::vector<Entity> projectileList;
 
     void init() {
+        playerSprites.init();
+
         player.init(200, 100, 25, 350);
-        playerInitAttacks(&player);
+        playerInit(&player, &playerSprites);
         
         cam.init(&player);
 
@@ -33,7 +37,7 @@ struct Game {
         menuImage = LoadTextureFromImage(menuData);
         UnloadImage(menuData);
 
-        Image mapData = LoadImage("assets/maps/FULLmap1.png");
+        Image mapData = LoadImage("assets/maps/FULLmap3.png");
         mapImage = LoadTextureFromImage(mapData);
         UnloadImage(mapData);
 
@@ -111,5 +115,6 @@ struct Game {
     void unload() {
         UnloadTexture(menuImage);
         UnloadTexture(mapImage);
+        playerSprites.unload();
     }
 };

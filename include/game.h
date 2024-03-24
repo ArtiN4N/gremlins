@@ -15,12 +15,10 @@ struct Game {
     Entity player;
     Viewport cam;
     Texture2D background;
-    bool inMainMenu = true;
+    bool inMainMenu;
 
     std::vector<Entity> enemyList;
     std::vector<Entity> projectileList;
-
-    //std::vector<vix::game_object> obstacles;
 
     void init() {
         player.init(200, 100, 25, 350);
@@ -29,7 +27,10 @@ struct Game {
         cam.init(&player);
 
         vix::initMap(new_piskel_data, NEW_PISKEL_FRAME_WIDTH, NEW_PISKEL_FRAME_HEIGHT);
-        //draw_image_and_push_to_vector(new_piskel_data, NEW_PISKEL_FRAME_WIDTH, NEW_PISKEL_FRAME_HEIGHT, obstacles);
+
+        background = LoadTexture("assets/menuimages/menubg.png");
+
+        inMainMenu = true;
     }
 
     void input(float dt) {
@@ -91,5 +92,9 @@ struct Game {
         //DrawText(TextFormat("elapsed: %.2f\n active: %d\n ready: %d\n player vel: { %.2f, %.2f }", player.attack.elapsed, player.attack.active, player.attack.ready, player.velocity.x, player.velocity.y), 10, 40, 10, WHITE);
         
         DrawFPS(10, 10);
+    }
+
+    void unload() {
+        UnloadTexture(background);
     }
 };

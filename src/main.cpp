@@ -3,8 +3,6 @@
 
 #include <stdio.h>
 
-#include "col.hpp"
-
 int main() {
     SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(SCREEN_W, SCREEN_H, "template");

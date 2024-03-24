@@ -1,5 +1,7 @@
 #pragma once
 
+#include "raylib.h"
+
 #include <algorithm>
 #include <cstdlib>
 #include <string>
@@ -42,6 +44,17 @@ namespace vix {
         return distance_squared <= (radius * radius);
     }
 
+    void initMap(const uint32_t image_data[][1024], int width, int height) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                //Get pixel color
+                uint32_t pixel = image_data[0][y * width + x];
+                std::cout << (pixel == 0x00000000) << std::endl;
+                map_data[y * width + x] = (pixel == 0x00000000);
+            }
+        }
+    }
+
     void draw_image_and_push_to_vector(const uint32_t image_data[][1024], int width, int height, std::vector<game_object>& game_objects_list) {
         //iterate through the image data and draw rectangles
         for (int y = 0; y < height; ++y) {
@@ -75,29 +88,13 @@ void main_2() {
 
     //Bounding box objects setup
     std::vector<vix::game_object> objects;
-    /*
-    vix::game_object obj1 = { { 200, 200, 100, 100 }, RED, vix::policy::COLLIDE, "red_box_name" };
-    vix::game_object obj2 = { { 400, 300, 150, 50 }, GREEN, vix::policy::COLLIDE, "green_box_name"};
-    vix::game_object obj3 = { { 100, 300, 400, 50 }, BLUE, vix::policy::DETECT, "blue_box_name"};
-    objects.push_back(obj1);
-    objects.push_back(obj2);
-    objects.push_back(obj3);
-    */
+
     draw_image_and_push_to_vector(new_piskel_data, NEW_PISKEL_FRAME_WIDTH, NEW_PISKEL_FRAME_HEIGHT, objects);
 
     SetTargetFPS(60); //Set the framerate
 
     //Main game loop
     while (!WindowShouldClose()) {
-        //Update
-
-        previous_player_position = player_position;
-
-        //Player movement
-        if (IsKeyDown(KEY_RIGHT)) player_position.x += 5.0;
-        else if (IsKeyDown(KEY_LEFT)) player_position.x -= 5.0;
-        if (IsKeyDown(KEY_DOWN)) player_position.y += 5.0;
-        else if (IsKeyDown(KEY_UP)) player_position.y -= 5.0;
 
         //Collision detection
         size_t length = objects.size();

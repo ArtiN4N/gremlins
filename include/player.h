@@ -12,20 +12,21 @@ void playerInitAttacks(Entity* player) {
 }
 
 void playerInputHandle(Entity* player, std::vector<Entity>* projectileList, float dt) {
+    player->moveVelocity = { 0.f, 0.f };
     if (IsKeyDown(KEY_LEFT)) {
-        player->position.x -= player->speed * dt;
+        player->moveVelocity.x = -player->speed;
         player->dir = WEST;
     }
     if (IsKeyDown(KEY_RIGHT)) {
-        player->position.x += player->speed * dt;
+        player->moveVelocity.x = player->speed;
         player->dir = EAST;
     }
     if (IsKeyDown(KEY_UP)) {
-        player->position.y -= player->speed * dt;
+        player->moveVelocity.y = -player->speed;
         player->dir = NORTH;
     }
     if (IsKeyDown(KEY_DOWN)) {
-        player->position.y += player->speed * dt;
+        player->moveVelocity.y = player->speed;
         player->dir = SOUTH;
     }
 
@@ -34,16 +35,16 @@ void playerInputHandle(Entity* player, std::vector<Entity>* projectileList, floa
     if (IsKeyPressed(KEY_X) && player->dashTrace == 0.f && !player->attack.active) {
         switch (player->dir) {
             case NORTH:
-                player->velocity.y += -3000;
+                player->actionVelocity.y += -3000;
                 break;
             case EAST:
-                player->velocity.x += 3000;
+                player->actionVelocity.x += 3000;
                 break;
             case SOUTH:
-                player->velocity.y += 3000;
+                player->actionVelocity.y += 3000;
                 break;
             case WEST:
-                player->velocity.x += -3000;
+                player->actionVelocity.x += -3000;
                 break;
         }
 

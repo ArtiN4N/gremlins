@@ -6,7 +6,11 @@
 #define NEW_PISKEL_FRAME_WIDTH 32
 #define NEW_PISKEL_FRAME_HEIGHT 32
 
+#define TILE_SIZE 32
+
 /* Piskel data for "New Piskel" */
+
+bool map_data[1024] = {0};
 
 static const uint32_t new_piskel_data[1][1024] = {
 {

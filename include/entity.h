@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "col.hpp"
-#include "Map.hpp"
+#include "map.h"
 
 struct Entity {
     Vector2 position;
@@ -121,7 +121,7 @@ struct Entity {
         else return tileCollisionSouth(prevPos, iX, iY, foundY, collide);
     }
 
-    bool update(bool map_data[1024], float dt) {
+    bool update(Map map, float dt) {
         bool ret = attack.update(dir, radius, dt);
 
         Vector2 prevPos = { position.x, position.y };
@@ -144,25 +144,26 @@ struct Entity {
         if (dashTrace < 0.f && dashTrace > -50.f) dashTrace = 0.f;
         
         // MAP COLLISION
-        Vector2 tileGridTL = {(float) ((int) (position.x - radius) / TILE_SIZE), (float) ((int) (position.y - radius) / TILE_SIZE)};
-        Vector2 tileGridTR = {(float) ((int) (position.x + radius) / TILE_SIZE), (float) ((int) (position.y - radius) / TILE_SIZE)};
-        Vector2 tileGridBL = {(float) ((int) (position.x - radius) / TILE_SIZE), (float) ((int) (position.y + radius) / TILE_SIZE)};
-        Vector2 tileGridBR = {(float) ((int) (position.x + radius) / TILE_SIZE), (float) ((int) (position.y + radius) / TILE_SIZE)};
+        Vector2 tileGridTL = {(float) ((int) (position.x - radius) / map.tileSize), (float) ((int) (position.y - radius) / map.tileSize)};
+        Vector2 tileGridTR = {(float) ((int) (position.x + radius) / map.tileSize), (float) ((int) (position.y - radius) / map.tileSize)};
+        Vector2 tileGridBL = {(float) ((int) (position.x - radius) / map.tileSize), (float) ((int) (position.y + radius) / map.tileSize)};
+        Vector2 tileGridBR = {(float) ((int) (position.x + radius) / map.tileSize), (float) ((int) (position.y + radius) / map.tileSize)};
 
         Vector2 tilesToCheck[] = { tileGridTL, tileGridTR, tileGridBL, tileGridBR };
 
         bool foundX = false;
         bool foundY = false;
 
-        std::cout << std::endl;
         for (int i = 0; i < 4; i++) {
             
             int iX = (int) tilesToCheck[i].x;
             int iY = (int) tilesToCheck[i].y;
 
-            if (!map_data[iY * NEW_PISKEL_FRAME_WIDTH + iX]) continue;
+            if (iX < 0 || iY < 0) continue;
+
+            if (!map.mapCollisionData[iY * map.width + iX]) continue;
             
-            Rectangle rec = {(float) (iX * TILE_SIZE), (float) (iY * TILE_SIZE), TILE_SIZE, TILE_SIZE};
+            Rectangle rec = {(float) (iX * map.tileSize), (float) (iY * map.tileSize), map.tileSize, map.tileSize};
 
             bool collide = vix::check_collision_circle_rec_this(position, radius, rec);
 

@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#define TILE_SIZE 64
+
 int SCREEN_W = 1600;
 int SCREEN_H = 800;
 

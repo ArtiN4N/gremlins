@@ -24,7 +24,7 @@ void playerInputHandle(Entity* player, std::vector<Entity>* projectileList, floa
         player->moveVelocity.x += player->speed;
         player->dir = EAST;
     } else if (IsKeyReleased(KEY_RIGHT)) {
-        player->moveVelocity.x += player->speed;
+        player->moveVelocity.x -= player->speed;
     }
 
 
@@ -39,7 +39,7 @@ void playerInputHandle(Entity* player, std::vector<Entity>* projectileList, floa
         player->moveVelocity.y += player->speed;
         player->dir = EAST;
     } else if (IsKeyReleased(KEY_DOWN)) {
-        player->moveVelocity.y += player->speed;
+        player->moveVelocity.y -= player->speed;
     }
 
 

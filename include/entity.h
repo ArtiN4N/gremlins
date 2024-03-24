@@ -20,6 +20,8 @@ struct Entity {
 
     float damage;
 
+    int gold;
+
     float dashTrace;
 
     float radius;
@@ -50,6 +52,7 @@ struct Entity {
 
         switch (type) {
             case PLAYER:
+                gold = 0;
                 radius = 25.f;
                 speed = 350;
                 hp = 100.f;
@@ -57,24 +60,28 @@ struct Entity {
                 attack.init(70, 50, .3f, .05f, false);
                 break;
             case HUMAN:
+                gold = 100;
                 radius = 35.f;
                 speed = 250;
                 hp = 50.f;
                 damage = 0.f;
                 break;
             case GHOST:
+                gold = 10;
                 radius = 20.f;
                 speed = 550;
                 hp = 20.f;
                 damage = 15.f;
                 break;
             case WIZARD:
+                gold = 5000;
                 radius = 40.f;
                 speed = 450;
                 hp = 100.f;
                 damage = 25.f;
                 break;
             case GRANDW:
+                gold = 100000;
                 radius = 80.f;
                 speed = 600;
                 hp = 1000.f;

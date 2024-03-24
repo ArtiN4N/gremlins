@@ -44,7 +44,7 @@ struct Game {
         map.setup();
         
         std::vector<EnemyInfo> enemyInfo = {};
-        map.initMap(4, &enemyInfo);
+        map.initMap(3, &enemyInfo);
 
         switchMapFlag = false;
 
@@ -104,6 +104,7 @@ struct Game {
 
             enemyList.push_back(enemy);
         }
+        std::cout << "done enemies" << std::endl;
     }
 
     void input(float dt) {
@@ -117,6 +118,8 @@ struct Game {
 
     void update(float dt) {
 
+        std::cout << "updating proj" << std::endl;
+
         for (auto iter = projectileList.begin(); iter != projectileList.end(); iter++) {
             int index = std::distance(projectileList.begin(), iter);
 
@@ -129,7 +132,7 @@ struct Game {
         }
 
         for (auto iter = enemyList.begin(); iter != enemyList.end(); iter++) {
-            int index = std::distance(projectileList.begin(), iter);
+            int index = std::distance(enemyList.begin(), iter);
 
             enemyList[index].update(&map, &switchMapFlag, dt);
             basicAI(&enemyList[index], &player, dt);
@@ -140,15 +143,22 @@ struct Game {
             }
         }
 
+        std::cout << "updating player" << std::endl;
+
         player.update(&map, &switchMapFlag, dt);
         if (player.flagDeath) {
             flagRestart = true;
         }
 
         if (player.attack.active) {
-            for (Entity enemy : enemyList) {
-                if (enemy.radius + player.radius < Vector2Distance(enemy.position, player.position)) {
+            for (Entity& enemy : enemyList) {
+                
+                if (enemy.radius + player.radius > Vector2Distance(enemy.position, player.position)) {
+                    player.attack.active = false;
                     enemy.takeDamage(player.damage);
+                    if (enemy.flagDeath) {
+                        player.gold += enemy.gold;
+                    }
                 }
             }
         }
@@ -224,6 +234,8 @@ struct Game {
         EndMode2D();
 
         DrawFPS(10, 10);
+
+        DrawText(TextFormat("GOLD = $%d", player.gold), 10, 40, 40, YELLOW);
     }
 
     void unload() {

@@ -228,3 +228,29 @@ struct GwizardSprites {
         en.attack.debugDraw(en.position);
     }
 };
+
+struct ProjectileSprites {
+    Texture2D idle;
+
+    void init() {
+        Image img = LoadImage(TextFormat("assets/arrow/idle.png"));
+        idle = LoadTextureFromImage(img);
+        UnloadImage(img);
+    }
+
+    void unload() {
+        UnloadTexture(idle);
+    }
+
+    void initEntity(Entity* en) {
+        en->tex = &(idle);
+    }
+
+    void draw(Entity en) {
+        Rectangle sourceRec = { 0.0f, 0.0f, (float) idle.width, (float) idle.height };
+        Rectangle destRec = { en.position.x, en.position.y - 10, en.radius * 10, en.radius * 10 };
+
+        DrawTexturePro(idle, sourceRec, destRec, { en.radius * 3/2, en.radius * 3/2 }, 0.f, WHITE);
+        en.attack.debugDraw(en.position);
+    }
+};

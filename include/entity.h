@@ -41,6 +41,11 @@ struct Entity {
 
     bool canDamage;
 
+    float fps;
+    float elapsed;
+    int frame;
+    int maxFrame;
+
     AttackBox attack;
 
     Texture2D* tex;
@@ -66,6 +71,11 @@ struct Entity {
         canDamage = true;
 
         tex = NULL;
+
+        fps = .6f;
+        elapsed = 0.f;
+        frame = 0;
+        maxFrame = 1;
 
         switch (type) {
             case PLAYER:

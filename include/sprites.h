@@ -132,12 +132,12 @@ struct HumanSprites {
     Texture2D walk[2];
 
     void init() {
-        Image img = LoadImage(TextFormat("assets/humans/idle.png"));
+        Image img = LoadImage(TextFormat("assets/human/human.png"));
         idle = LoadTextureFromImage(img);
         UnloadImage(img);
 
         for (int i = 0; i < 2; i++) {
-            Image img = LoadImage(TextFormat("assets/humans/walk%d.png", i + 1));
+            Image img = LoadImage(TextFormat("assets/human/run%d.png", i + 1));
             walk[i] = LoadTextureFromImage(img);
             UnloadImage(img);
         }
@@ -155,16 +155,37 @@ struct HumanSprites {
         en->tex = &(idle);
     }
 
+    void update(Entity* en, float dt) {
+        en->maxFrame = 1;
+        en->tex = &(idle);
+
+        if (en->moveVelocity.x != 0.f || en->moveVelocity.y != 0.f) {
+            
+            if (en->moveVelocity.x > 0.f) {
+                en->tex = walk;
+            }else {
+                en->tex = walk + 1;
+            }
+            en->maxFrame = 6;
+        }
+
+        en->elapsed += dt * .5f;
+        if (en->elapsed > en->fps) en->frame++;
+        if (en->frame > en->maxFrame - 1) en->frame = 0;
+        
+    }
+
     void draw(Entity en) {
         Texture2D drawing = *(en.tex);
-        Rectangle sourceRec = { 0.0f, 0.0f, (float) drawing.width, (float) drawing.height };
 
-        Rectangle destRec = { en.position.x, en.position.y - 10, en.radius * 3, en.radius * 3 };
+        Rectangle sourceRec = { (float) en.frame * ((float) drawing.width / (float) en.maxFrame), 0.0f, (float) drawing.width / (float) en.maxFrame, (float) drawing.height };
 
-        DrawCircleV(en.position, en.radius, BLUE);
+        Rectangle destRec = { en.position.x, en.position.y, en.radius * 5, en.radius * 5 };
 
-        DrawTexturePro(drawing, sourceRec, destRec, { en.radius * 3/2, en.radius * 3/2 }, 0.f, WHITE);
-        en.attack.debugDraw(en.position);
+        DrawCircleV(en.position, en.radius, RED);
+        
+
+        DrawTexturePro(drawing, sourceRec, destRec, { en.radius * 5/2, en.radius * 5/2 }, 0.f, WHITE);
     }
 };
 
@@ -174,12 +195,12 @@ struct GhostSprites {
     Texture2D walk[2];
 
     void init() {
-        Image img = LoadImage(TextFormat("assets/ghosts/idle.png"));
+        Image img = LoadImage(TextFormat("assets/ghost/idle.png"));
         idle = LoadTextureFromImage(img);
         UnloadImage(img);
 
         for (int i = 0; i < 2; i++) {
-            Image img = LoadImage(TextFormat("assets/ghosts/walk%d.png", i + 1));
+            Image img = LoadImage(TextFormat("assets/ghost/walk%d.png", i + 1));
             walk[i] = LoadTextureFromImage(img);
             UnloadImage(img);
         }

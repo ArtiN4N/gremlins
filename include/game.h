@@ -160,6 +160,7 @@ struct Game {
             switch (enemyList[index].type) {
                 case HUMAN:
                     humanAI(&enemyList[index], &player, dt);
+                    humanSprites.update(&enemyList[index], dt);
                     break;
                 case GHOST:
                     ghostAI(&enemyList[index], &player, dt);

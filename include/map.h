@@ -13,6 +13,7 @@
 #include "FULLmap3.h"
 #include "FULLmap4.h"
 #include "FULLmap5.h"
+#include "FULLmap8.h"
 
 enum CollisionType { WALL = 0, DOOR, NONE };
 
@@ -22,24 +23,24 @@ unsigned int mapSizes[10][2] = {
     {48, 64},
     {64, 43},
     {64, 39},
-    {0, 0},
-    {0, 0},
-    {0, 0},
-    {0, 0},
-    {0, 0}
+    {64, 64},
+    {64, 64},
+    {64, 64},
+    {64, 64},
+    {64, 64},
 };
 
 Vector2 mapSpawns[10][2] = {
     {{128, 1300}, {4000, 1300}},
     {{1920, 128}, {1500, 4000}},
-    {{2900, 1000}, {1530, 4000}},
+    {{2750, 1000}, {1530, 4000}},
     {{300, 300}, {3650, 2000}},
     {{128, 1664}, {128, 1664}},
-    {0, 0},
-    {0, 0},
-    {0, 0},
-    {0, 0},
-    {0, 0}
+    {{2100, 1000}, {2100, 1000}},
+    {{2100, 1000}, {2100, 1000}},
+    {{2100, 1000}, {2100, 1000}},
+    {{2100, 1000}, {2100, 1000}},
+    {{2100, 1000}, {2100, 1000}},
 };
 
 std::vector<EnemyInfo> mapEnemies[10] = {}; 
@@ -56,15 +57,17 @@ struct Map {
 
     CollisionType* mapCollisionData;
 
-    Texture2D mapTextures[5];
+    Texture2D mapTextures[6];
     Texture2D* currentMapTex;
 
     void setup() {
         mapNum = 0;
         oldMapNum = 0;
 
-        for (int i = 0; i < 5; i++) {
-            Image mapData = LoadImage(TextFormat("assets/maps/FULLmap%d.png", i+1));
+        for (int i = 0; i < 6; i++) {
+            int j = i;
+            if (i == 5) j = 7;
+            Image mapData = LoadImage(TextFormat("assets/maps/FULLmap%d.png", j+1));
             Texture2D mapImage = LoadTextureFromImage(mapData);
             UnloadImage(mapData);
 
@@ -78,6 +81,7 @@ struct Map {
         map3Setup(&(mapEnemies[2]));
         map4Setup(&(mapEnemies[3]));
         map5Setup(&(mapEnemies[4]));
+        map8Setup(&(mapEnemies[7]));
         //map6Setup();
         //map7Setup();
         //map8Setup();
@@ -114,6 +118,9 @@ struct Map {
                 break;
             case 5:
                 image_data = fullmap5_data;
+                break;
+            case 8:
+                image_data = fullmap8_data;
                 break;
             default:
                 image_data = fullmap4_data;
@@ -188,7 +195,7 @@ struct Map {
         switch (mapNum) {
             case 1:
                 if (position.x < 128) return 2;
-                else return 5;
+                else return 8;
             case 2:
                 if (position.y < 128) return 3;
                 else return 1;
@@ -198,6 +205,8 @@ struct Map {
             case 4:
                 return 3;
             case 5:
+                return 1;
+            case 8:
                 return 1;
             default:
                 return 1;

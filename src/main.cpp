@@ -10,6 +10,12 @@ int main() {
     InitWindow(SCREEN_W, SCREEN_H, "template");
 
     Game game;
+
+    BeginDrawing();
+            ClearBackground(BLACK);
+            DrawText("wasd move, z attack, x dash, a heal\n loading", 0, SCREEN_H / 2, 50.f, WHITE);
+            EndDrawing();
+
     game.init();
 
     while (!WindowShouldClose()) {
@@ -34,6 +40,10 @@ int main() {
             printf("you died!\n");
             game.unload();
             game = {};
+            BeginDrawing();
+            ClearBackground(BLACK);
+            DrawText("wasd move, z attack, x dash, a heal\n loading", 0, SCREEN_H / 2, 50.f, WHITE);
+            EndDrawing();
             game.init();
         }
     }

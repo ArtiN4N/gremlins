@@ -117,12 +117,12 @@ struct PlayerSprites {
         Texture2D drawing = *(en.tex);
         Rectangle sourceRec = { (float) frame * ((float) drawing.width / (float) maxFrame), 0.0f, (float) drawing.width / (float) maxFrame, (float) drawing.height };
 
-        Rectangle destRec = { en.position.x, en.position.y, en.radius * 5, en.radius * 5 };
+        Rectangle destRec = { en.position.x, en.position.y, en.radius * 7, en.radius * 7 };
 
         DrawCircleV(en.position, en.radius, RED);
 
-        DrawTexturePro(drawing, sourceRec, destRec, { en.radius * 5/2, en.radius * 5/2 }, 0.f, WHITE);
-        en.attack.debugDraw(en.position);
+        DrawTexturePro(drawing, sourceRec, destRec, { en.radius * 7/2, en.radius * 7/2 }, 0.f, WHITE);
+        //en.attack.debugDraw(en.position);
     }
 };
 
@@ -224,10 +224,10 @@ struct GhostSprites {
 
         Rectangle destRec = { en.position.x, en.position.y - 10, en.radius * 3, en.radius * 3 };
 
-        DrawCircleV(en.position, en.radius, BLUE);
+        //
 
         DrawTexturePro(drawing, sourceRec, destRec, { en.radius * 3/2, en.radius * 3/2 }, 0.f, WHITE);
-        en.attack.debugDraw(en.position);
+        //en.attack.debugDraw(en.position);
     }
 };
 
@@ -268,10 +268,10 @@ struct WizardSprites {
 
         Rectangle destRec = { en.position.x, en.position.y - 10, en.radius * 3, en.radius * 3 };
 
-        DrawCircleV(en.position, en.radius, BLUE);
+        //
 
         DrawTexturePro(drawing, sourceRec, destRec, { en.radius * 3/2, en.radius * 3/2 }, 0.f, WHITE);
-        en.attack.debugDraw(en.position);
+        //en.attack.debugDraw(en.position);
     }
 };
 
@@ -310,12 +310,12 @@ struct GwizardSprites {
         Texture2D drawing = *(en.tex);
         Rectangle sourceRec = { 0.0f, 0.0f, (float) drawing.width, (float) drawing.height };
 
-        DrawCircleV(en.position, en.radius, BLUE);
+        //
 
         Rectangle destRec = { en.position.x, en.position.y - 10, en.radius * 3, en.radius * 3 };
 
         DrawTexturePro(drawing, sourceRec, destRec, { en.radius * 3/2, en.radius * 3/2 }, 0.f, WHITE);
-        en.attack.debugDraw(en.position);
+        //en.attack.debugDraw(en.position);
     }
 };
 
@@ -341,6 +341,6 @@ struct ProjectileSprites {
         Rectangle destRec = { en.position.x, en.position.y - 10, en.radius * 10, en.radius * 10 };
 
         DrawTexturePro(idle, sourceRec, destRec, { en.radius * 3/2, en.radius * 3/2 }, 0.f, WHITE);
-        en.attack.debugDraw(en.position);
+        //en.attack.debugDraw(en.position);
     }
 };

@@ -13,7 +13,7 @@ struct Viewport {
         
         camera.offset = { SCREEN_W / 2.f, SCREEN_H / 2.f };
         camera.rotation = 0.f;
-        camera.zoom = 1.f;
+        camera.zoom = 1.2f;
 
         parent = following;
     }

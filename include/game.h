@@ -249,6 +249,11 @@ struct Game {
         
         Texture2D mapTex = *(map.currentMapTex);
 
+        std::cout << map.mapNum << std::endl;
+        if (map.mapNum == 8) {
+            mapTex = map.mapTextures[5];
+        }
+
         Rectangle sourceRec = { 0.0f, 0.0f, (float) mapTex.width, (float) mapTex.height };
 
         Rectangle destRec = { 0, 0, (float) mapTex.width, (float) mapTex.height };
@@ -258,7 +263,7 @@ struct Game {
 
         
 
-        for (int iY = 0; iY < map.height; iY++) {
+        /*for (int iY = 0; iY < map.height; iY++) {
             for (int iX = 0; iX < map.width; iX++) {
                 if (map.mapCollisionData[iY * map.width + iX] != NONE) {
                     Color color = RED;
@@ -266,7 +271,7 @@ struct Game {
                     DrawRectangle(iX * map.tileSize, iY * map.tileSize, map.tileSize, map.tileSize, color);
                 }   
             }
-        }
+        }*/
 
         for (Entity e : enemyList) {
             switch (e.type) {

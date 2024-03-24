@@ -80,7 +80,7 @@ struct Entity {
         switch (type) {
             case PLAYER:
                 gold = 0;
-                radius = 25.f;
+                radius = 18.f;
                 speed = 450;
                 hp = 100.f;
                 maxHP = hp;

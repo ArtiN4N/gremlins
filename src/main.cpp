@@ -11,8 +11,6 @@ int main() {
     Game game;
     game.init();
 
-    game.background = LoadTexture("assets/menuimages/menubg.png");
-
     while (!WindowShouldClose()) {
         if (game.inMainMenu) {
             SetWindowTitle("GM2: Menu");
@@ -30,7 +28,7 @@ int main() {
         }
     }
 
-    UnloadTexture(game.background);
+    game.unload();
 
     CloseWindow();
     return 0;

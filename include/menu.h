@@ -8,12 +8,12 @@ void MainMenu(Game& game) {
     BeginDrawing();
     ClearBackground(BLACK);
 
-    Rectangle sourceRec = { 0.0f, 0.0f, (float)game.background.width, (float)game.background.height };
+    Rectangle sourceRec = { 0.0f, 0.0f, (float)game.menuImage.width, (float)game.menuImage.height };
 
     Rectangle destRec = { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() };
 
     // draw backgroudd img scaled to the screen size
-    DrawTexturePro(game.background, sourceRec, destRec, (Vector2){ 0, 0 }, 0.0f, WHITE);
+    DrawTexturePro(game.menuImage, sourceRec, destRec, (Vector2){ 0, 0 }, 0.0f, WHITE);
 
     DrawText("Gremlin Massacre 2: A Gremlin's Revenge", GetScreenWidth() / 2 - MeasureText("Gremlin Massacre 2: A Gremlin's Revenge", 40) / 2, GetScreenHeight() / 4 - 40, 40, WHITE);
 

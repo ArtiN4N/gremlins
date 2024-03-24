@@ -14,7 +14,7 @@
 struct Game {
     Entity player;
     Viewport cam;
-    Texture2D background;
+    Texture2D menuImage;
     bool inMainMenu;
 
     std::vector<Entity> enemyList;
@@ -28,7 +28,9 @@ struct Game {
 
         vix::initMap(new_piskel_data, NEW_PISKEL_FRAME_WIDTH, NEW_PISKEL_FRAME_HEIGHT);
 
-        background = LoadTexture("assets/maps/map1.png");
+        Image mImage = LoadImage("assets/maps/map1.png");
+        menuImage = LoadTextureFromImage(mImage);
+        UnloadImage(mImage);
 
         inMainMenu = true;
     }
@@ -95,6 +97,6 @@ struct Game {
     }
 
     void unload() {
-        UnloadTexture(background);
+        UnloadTexture(menuImage);
     }
 };

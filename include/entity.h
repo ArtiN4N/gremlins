@@ -21,6 +21,7 @@ struct Entity {
     float damage;
 
     int gold;
+    int heals;
 
     float dashTrace;
 
@@ -43,6 +44,7 @@ struct Entity {
         actionVelocity = { 0.f, 0.f };
 
         type = ty;
+        heals = 0;
 
         flagDeath = false;
 

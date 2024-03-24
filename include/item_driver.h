@@ -34,7 +34,5 @@ namespace vix {
 
     };
 
-
-
     std::vector<item_driver> items_list;
 }

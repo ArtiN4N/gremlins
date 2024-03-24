@@ -13,7 +13,17 @@ struct PlayerSprites {
 
     Texture2D attack[4];
 
+    float fps;
+    float elapsed;
+    int frame;
+    int maxFrame;
+
     void init() {
+        fps = .6f;
+        elapsed = 0.f;
+        frame = 0;
+        maxFrame = 1;
+
         for (int i = 0; i < 4; i++) {
             Image img = LoadImage(TextFormat("assets/gramps/idle%d.png", i + 1));
             idle[i] = LoadTextureFromImage(img);
@@ -46,13 +56,72 @@ struct PlayerSprites {
         en->tex = &(idle[1]);
     }
 
+    void update(Entity* en, float dt) {
+        maxFrame = 1;
+        switch (en->dir) {
+            case NORTH:
+                en->tex = &(idle[1]);
+                break;
+            case SOUTH:
+                en->tex = &(idle[0]);
+                break;
+            case WEST:
+                en->tex = &(idle[3]);
+                break;
+            case EAST:
+                en->tex = &(idle[2]);
+                break;
+        }
+        if (en->moveVelocity.x != 0.f || en->moveVelocity.y != 0.f) {
+            maxFrame = 6;
+            switch (en->dir) {
+                case NORTH:
+                    en->tex = &(walk[1]);
+                    break;
+                case SOUTH:
+                    en->tex = &(walk[0]);
+                    break;
+                case WEST:
+                    en->tex = &(walk[3]);
+                    break;
+                case EAST:
+                    en->tex = &(walk[2]);
+                    break;
+            }
+        }
+        if (en->attack.active) {
+            maxFrame = 7;
+            switch (en->dir) {
+                case NORTH:
+                    en->tex = &(attack[1]);
+                    break;
+                case SOUTH:
+                    en->tex = &(attack[0]);
+                    break;
+                case WEST:
+                    en->tex = &(attack[3]);
+                    break;
+                case EAST:
+                    en->tex = &(attack[2]);
+                    break;
+            }
+        }
+
+        elapsed += dt * .5f;
+        if (elapsed > fps) frame++;
+        if (frame > maxFrame - 1) frame = 0;
+        
+    }
+
     void draw(Entity en) {
         Texture2D drawing = *(en.tex);
-        Rectangle sourceRec = { 0.0f, 0.0f, (float) drawing.width, (float) drawing.height };
+        Rectangle sourceRec = { (float) frame * ((float) drawing.width / (float) maxFrame), 0.0f, (float) drawing.width / (float) maxFrame, (float) drawing.height };
 
-        Rectangle destRec = { en.position.x, en.position.y - 10, en.radius * 3, en.radius * 3 };
+        Rectangle destRec = { en.position.x, en.position.y, en.radius * 5, en.radius * 5 };
 
-        DrawTexturePro(drawing, sourceRec, destRec, { en.radius * 3/2, en.radius * 3/2 }, 0.f, WHITE);
+        DrawCircleV(en.position, en.radius, RED);
+
+        DrawTexturePro(drawing, sourceRec, destRec, { en.radius * 5/2, en.radius * 5/2 }, 0.f, WHITE);
         en.attack.debugDraw(en.position);
     }
 };

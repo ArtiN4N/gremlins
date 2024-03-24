@@ -39,6 +39,8 @@ struct Entity {
 
     Direction dir;
 
+    bool canDamage;
+
     AttackBox attack;
 
     Texture2D* tex;
@@ -60,6 +62,8 @@ struct Entity {
         flagDeath = false;
 
         dir = NORTH;
+
+        canDamage = true;
 
         tex = NULL;
 

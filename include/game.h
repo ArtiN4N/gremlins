@@ -22,14 +22,15 @@ struct Game {
 
     Viewport cam;
     Texture2D menuImage;
-    Texture2D mapImage;
+    
     bool inMainMenu;
 
     std::vector<Entity> enemyList;
     std::vector<Entity> projectileList;
 
     void init() {
-        map.initMap(1);        
+        map.setup();
+        map.initMap(2);
 
         playerSprites.init();
         enemySprites.init();
@@ -40,6 +41,7 @@ struct Game {
         enemyInit(&enemy, &enemySprites);
         
         Vector2 spawn = map.getSpawnPos();
+
         player.init(spawn.x, spawn.y, 25, 350);
         playerInit(&player, &playerSprites);
         
@@ -49,10 +51,6 @@ struct Game {
         Image menuData = LoadImage("assets/maps/map1.png");
         menuImage = LoadTextureFromImage(menuData);
         UnloadImage(menuData);
-
-        Image mapData = LoadImage("assets/maps/FULLmap2.png");
-        mapImage = LoadTextureFromImage(mapData);
-        UnloadImage(mapData);
 
         inMainMenu = true;
     }
@@ -66,7 +64,7 @@ struct Game {
         for (auto iter = projectileList.begin(); iter != projectileList.end(); iter++) {
             int index = std::distance(projectileList.begin(), iter);
 
-            bool alive = projectileList[index].update(map, dt);
+            bool alive = projectileList[index].update(&map, dt);
             
             if (!alive) {
                 projectileList.erase(projectileList.begin() + index);
@@ -79,7 +77,7 @@ struct Game {
             basicAI(&enemy, &player, dt);
         }
 
-        player.update(map, dt);
+        player.update(&map, dt);
 
         cam.update();
     }
@@ -88,12 +86,18 @@ struct Game {
         ClearBackground(BLACK);
         BeginMode2D(cam.camera);
 
-        Rectangle sourceRec = { 0.0f, 0.0f, (float) mapImage.width, (float) mapImage.height };
 
-        Rectangle destRec = { 0, 0, (float) mapImage.width, (float) mapImage.height };
+        //Texture2D mapTex = map.mapTextures[3];
+
+        
+        Texture2D mapTex = *(map.currentMapTex);
+
+        Rectangle sourceRec = { 0.0f, 0.0f, (float) mapTex.width, (float) mapTex.height };
+
+        Rectangle destRec = { 0, 0, (float) mapTex.width, (float) mapTex.height };
 
         // draw backgroudd img scaled to the screen size
-        DrawTexturePro(mapImage, sourceRec, destRec, (Vector2){ 0, 0 }, 0.0f, WHITE);
+        DrawTexturePro(mapTex, sourceRec, destRec, (Vector2){ 0, 0 }, 0.0f, WHITE);
 
         for (int iY = 0; iY < map.height; iY++) {
             for (int iX = 0; iX < map.width; iX++) {
@@ -122,8 +126,8 @@ struct Game {
 
     void unload() {
         UnloadTexture(menuImage);
-        UnloadTexture(mapImage);
         playerSprites.unload();
         map.unloadMap();
+        map.teardown();
     }
 };

@@ -74,7 +74,7 @@ struct Entity {
             //prevPos->y = position.y;
             actionVelocity.x *= -.5f;
             *foundX = true;
-            std::cout << "east collision with pos: " << iX << ":" << iY << std::endl;
+
             return true;
         }
         return false;
@@ -86,7 +86,6 @@ struct Entity {
             //prevPos->y = position.y;
             actionVelocity.x *= -.5f;
             *foundX = true;
-            std::cout << "west collision with pos: " << iX << ":" << iY << std::endl;
             return true;
         }
         return false;
@@ -103,7 +102,6 @@ struct Entity {
             //prevPos->x = position.x;
             actionVelocity.y *= -.5f;
             *foundY = true;
-            std::cout << "south collision with pos: " << iX << ":" << iY << std::endl;
             return true;
         }
         return false;
@@ -115,7 +113,6 @@ struct Entity {
             //prevPos->x = position.x;
             actionVelocity.y *= -.5f;
             *foundY = true;
-            std::cout << "north collision with pos: " << iX << ":" << iY << std::endl;
             return true;
         }
         return false;
@@ -126,7 +123,7 @@ struct Entity {
         else return tileCollisionSouth(prevPos, iX, iY, foundY, collide);
     }
 
-    bool update(Map map, float dt) {
+    bool update(Map* map, float dt) {
         bool ret = attack.update(dir, radius, dt);
 
         Vector2 prevPos = { position.x, position.y };
@@ -153,10 +150,10 @@ struct Entity {
         if (dashTrace < 0.f && dashTrace > -50.f) dashTrace = 0.f;
 
         // MAP COLLISION
-        Vector2 tileGridTL = {(float) ((int) (position.x - radius) / map.tileSize), (float) ((int) (position.y - radius) / map.tileSize)};
-        Vector2 tileGridTR = {(float) ((int) (position.x + radius) / map.tileSize), (float) ((int) (position.y - radius) / map.tileSize)};
-        Vector2 tileGridBL = {(float) ((int) (position.x - radius) / map.tileSize), (float) ((int) (position.y + radius) / map.tileSize)};
-        Vector2 tileGridBR = {(float) ((int) (position.x + radius) / map.tileSize), (float) ((int) (position.y + radius) / map.tileSize)};
+        Vector2 tileGridTL = {(float) ((int) (position.x - radius) / map->tileSize), (float) ((int) (position.y - radius) / map->tileSize)};
+        Vector2 tileGridTR = {(float) ((int) (position.x + radius) / map->tileSize), (float) ((int) (position.y - radius) / map->tileSize)};
+        Vector2 tileGridBL = {(float) ((int) (position.x - radius) / map->tileSize), (float) ((int) (position.y + radius) / map->tileSize)};
+        Vector2 tileGridBR = {(float) ((int) (position.x + radius) / map->tileSize), (float) ((int) (position.y + radius) / map->tileSize)};
 
         Vector2 tilesToCheck[] = { tileGridTL, tileGridTR, tileGridBL, tileGridBR };
 
@@ -169,17 +166,19 @@ struct Entity {
             int iY = (int) tilesToCheck[i].y;
 
             if (iX < 0 || iY < 0 || iX >= map.width || iY >= map.height) continue;
-            if (map.mapCollisionData[iY * map.width + iX] == NONE) continue;
+            if (map->mapCollisionData[iY * map->width + iX] == NONE) continue;
             
-            Rectangle rec = {(float) (iX * map.tileSize), (float) (iY * map.tileSize), map.tileSize, map.tileSize};
+            Rectangle rec = {(float) (iX * map->tileSize), (float) (iY * map->tileSize), (float) map->tileSize, (float) map->tileSize};
 
             bool collide = vix::check_collision_circle_rec_this(position, radius, rec);
 
             if (!collide) continue;
 
-            if (map.mapCollisionData[iY * map.width + iX] == DOOR && player) {
-                map.switchMap(map.getNewMap(position));
-                continue;
+            if (map->mapCollisionData[iY * map->width + iX] == DOOR && player) {
+                std::cout << "loading new map" << std::endl;
+                map->switchMap(map->getNewMap(position));
+                position = map->getSpawnPos();
+                break;
             }
             
             if (dir == EAST || dir == WEST) {

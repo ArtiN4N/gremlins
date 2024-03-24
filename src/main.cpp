@@ -62,8 +62,10 @@ int main() {
 
     while (!WindowShouldClose()) {
         if (inMainMenu) {
+            SetWindowTitle("GM2: Menu");
             MainMenu();
         } else {
+            SetWindowTitle("GM2: A Gremlin's Revenge");
             float dt = GetFrameTime();
 
             game.input(dt);

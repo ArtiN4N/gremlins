@@ -114,6 +114,10 @@ struct AttackBox {
         return true;
     }
 
+    Vector2 getPos(Vector2 parentPos) {
+        return { parentPos.x + offset.x, parentPos.y + offset.y };
+    }
+
     void debugDraw(Vector2 parentPos) {
         if (!active) return;
 

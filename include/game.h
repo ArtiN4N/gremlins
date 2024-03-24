@@ -84,38 +84,10 @@ struct Game {
         //item system
         vix::items_list.push_back(vix::item_driver{ {spawn.x-100, spawn.y-100}, 30 , vix::item_type::COIN});
         vix::items_list.push_back(vix::item_driver{ {spawn.x-200, spawn.y-200}, 20, vix::item_type::COIN });
-        vix::items_list.push_back(vix::item_driver{ {spawn.x-300, spawn.y-300}, 25, vix::item_type::COIN });
+        vix::items_list.push_back(vix::item_driver{ {spawn.x-300, spawn.y-300}, 25, vix::item_type::HEALTH });
     }
 
-    void addEntities(std::vector<EnemyInfo> entityInfo) {
-        std::cout << "looping through enemy infos..." << std::endl;
-        for (EnemyInfo info : entityInfo) {
-            std::cout << "craeting enemy";
-            std::cout << " at xPos: " << info.spawn.x << std::endl;
-            Entity enemy;
-            enemy.init(info.spawn.x, info.spawn.y, info.type);
-
-            switch (info.type) {
-                case HUMAN:
-                    humanSprites.initEntity(&enemy);
-                    break;
-                case GHOST:
-                    ghostSprites.initEntity(&enemy);
-                    break;
-                case WIZARD:
-                    wizardSprites.initEntity(&enemy);
-                    break;
-                case GRANDW:
-                    GWizardSprites.initEntity(&enemy);
-                    break;
-                default:
-                    break;
-            }
-
-            enemyList.push_back(enemy);
-        }
-        std::cout << "done enemies" << std::endl;
-    }
+    
 
     void addEntities(std::vector<EnemyInfo> entityInfo) {
         std::cout << "looping through enemy infos..." << std::endl;
@@ -158,8 +130,6 @@ struct Game {
 
     void update(float dt) {
 
-        std::cout << "updating proj" << std::endl;
-
         for (auto iter = projectileList.begin(); iter != projectileList.end(); iter++) {
             int index = std::distance(projectileList.begin(), iter);
 
@@ -183,23 +153,29 @@ struct Game {
             }
         }
 
-        std::cout << "updating player" << std::endl;
-
         player.update(&map, &switchMapFlag, dt);
         if (player.flagDeath) {
             flagRestart = true;
         }
 
-        if (player.attack.active) {
-            for (Entity& enemy : enemyList) {
-                
-                if (enemy.radius + player.radius > Vector2Distance(enemy.position, player.position)) {
+        for (Entity& enemy : enemyList) {
+            if (player.attack.active) {
+                Rectangle rec = {player.attack.getPos(player.position).x, player.attack.getPos(player.position).y, player.attack.realSize.x, player.attack.realSize.y };
+                if (vix::check_collision_circle_rec_this(enemy.position, enemy.radius, rec)) {
                     player.attack.active = false;
                     enemy.takeDamage(player.damage);
                     if (enemy.flagDeath) {
                         player.gold += enemy.gold;
                     }
+
+                    enemy.actionVelocity = Vector2Scale(Vector2Subtract(enemy.position, player.position), 60.f);
                 }
+            }
+
+            if (enemy.radius + player.radius > Vector2Distance(enemy.position, player.position)) {
+                if (enemy.type != GHOST || player.invincibility != 0.f) continue;
+                player.takeDamage(enemy.damage);
+                player.actionVelocity = Vector2Scale(Vector2Subtract(player.position, enemy.position), 30.f);
             }
         }
 
@@ -251,7 +227,22 @@ struct Game {
         }
 
         for (Entity e : enemyList) {
-            e.draw();
+            switch (e.type) {
+                case HUMAN:
+                    humanSprites.draw(e);
+                    break;
+                case GHOST:
+                    ghostSprites.draw(e);
+                    break;
+                case WIZARD:
+                    wizardSprites.draw(e);
+                    break;
+                case GRANDW:
+                    GWizardSprites.draw(e);
+                    break;
+                default:
+                    break;
+            }
         }
 
 
@@ -261,21 +252,34 @@ struct Game {
         for (size_t i = 0; i<items_list_length; i++) {
             vix::items_list[i].draw();
             if (vix::items_list[i].check_collision(player.position, player.radius)) {
-                 inventory.push_back(vix::items_list[i].item_type);
-                 vix::items_list.erase(vix::items_list.begin()+i);
-                 items_list_length--;
+                switch (vix::items_list[i].item_type) {
+                    case vix::HEALTH:
+                        player.heals++;
+                        break;
+                    case vix::COIN:
+                        player.gold += 250;
+                        break;
+                    default:
+                        inventory.push_back(vix::items_list[i].item_type);
+                        break;
+                }
+                vix::items_list.erase(vix::items_list.begin()+i);
+                items_list_length--;
 
-                 std::cout<<"Hit"<<std::endl;
+                std::cout<<"Hit"<<std::endl;
             }
         }
 
-        player.draw();
+        playerSprites.draw(player);
 
         EndMode2D();
 
         DrawFPS(10, 10);
 
-        DrawText(TextFormat("GOLD = $%d", player.gold), 10, 40, 40, YELLOW);
+        DrawRectangle(0, 0, 300, 200, {255, 255, 255, 120});
+        DrawText(TextFormat("HP = %.0f", player.hp), 10, 40, 40, RED);
+        DrawText(TextFormat("GOLD = $%d", player.gold), 10, 75, 40, YELLOW);
+        DrawText(TextFormat("HEALS = %d", player.heals), 10, 110, 40, RED);
     }
 
     void unload() {

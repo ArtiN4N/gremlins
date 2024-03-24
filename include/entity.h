@@ -11,11 +11,18 @@
 #include "col.hpp"
 #include "map.h"
 
+enum EntityType {
+    PLAYER,
+    ENEMY
+};
+
 struct Entity {
     Vector2 position;
 
     Vector2 moveVelocity;
     Vector2 actionVelocity;
+
+    EntityType type;
 
     float dashTrace;
 
@@ -134,6 +141,10 @@ struct Entity {
         position.x += (actionVelocity.x + moveVelocity.x) * dt;
         position.y += (actionVelocity.y + moveVelocity.y) * dt;
 
+        // Debug logging
+        // std::cout << "Player previous position: (" << prevPos.x << ", " << prevPos.y << ")\n";
+        // std::cout << "PLayer updated postion: (" << position.x << ", " << position.y << ")\n";
+
         float f = .0005f;
         actionVelocity.x *= pow(f, dt);
         actionVelocity.y *= pow(f, dt);
@@ -147,10 +158,19 @@ struct Entity {
 
         if (dashTrace > 0.f && dashTrace < 50.f) dashTrace = 0.f;
         if (dashTrace < 0.f && dashTrace > -50.f) dashTrace = 0.f;
-        
-        // Move the enemy towards the player's position.
-    float maxDistance = speed * dt;  // Adjust the speed as needed.
-    position = Vector2MoveTowards(position, player->position, maxDistance);
+
+        if (type == ENEMY) {
+            // Calculate the direction vector from the enemy to the player
+            Vector2 target = player->position;
+
+            // Move the enemy towards the player, but not beyond the enemy's speed
+            moveVelocity = Vector2MoveTowards(position, target, speed * dt);
+
+            // Debug logging
+            std::cout << "Enemy position: (" << position.x << ", " << position.y << ")\n";
+            std::cout << "Player position: (" << target.x << ", " << target.y << ")\n";
+            std::cout << "Enemy move velocity: (" << moveVelocity.x << ", " << moveVelocity.y << ")\n";
+        }
 
         // MAP COLLISION
         Vector2 tileGridTL = {(float) ((int) (position.x - radius) / map.tileSize), (float) ((int) (position.y - radius) / map.tileSize)};
@@ -168,8 +188,7 @@ struct Entity {
             int iX = (int) tilesToCheck[i].x;
             int iY = (int) tilesToCheck[i].y;
 
-            if (iX < 0 || iY < 0) continue;
-
+            if (iX < 0 || iY < 0 || iX >= map.width || iY >= map.height) continue;
             if (map.mapCollisionData[iY * map.width + iX] == NONE) continue;
             
             Rectangle rec = {(float) (iX * map.tileSize), (float) (iY * map.tileSize), map.tileSize, map.tileSize};
@@ -191,25 +210,11 @@ struct Entity {
                 if (tileCollisionX(&prevPos, iX, iY, &foundX, collide)) continue;
             }
             
+            
         }
 
         return ret;
     }
-
-    Vector2 Vector2Subtract(Vector2 v1, Vector2 v2) {
-    Vector2 result;
-    result.x = v1.x - v2.x;
-    result.y = v1.y - v2.y;
-    return result;
-}
-
-    Vector2 Vector2Normalize(Vector2 v) {
-    float length = sqrt((v.x * v.x) + (v.y * v.y));
-    Vector2 result;
-    result.x = v.x / length;
-    result.y = v.y / length;
-    return result;
-}
 
 
     void draw() {

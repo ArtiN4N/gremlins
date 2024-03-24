@@ -13,6 +13,8 @@
 
 struct Game {
     Entity player;
+    Entity enemy;
+
     PlayerSprites playerSprites;
 
     Map map;
@@ -26,13 +28,25 @@ struct Game {
     std::vector<Entity> projectileList;
 
     void init() {
-        map.initMap(2);
+        map.initMap(1);
+
+        player.type = PLAYER;
+        enemy.type = ENEMY;
 
         playerSprites.init();
         
         Vector2 spawn = map.getSpawnPos();
         player.init(spawn.x, spawn.y, 25, 350);
         playerInit(&player, &playerSprites);
+
+        Vector2 playerPos = player.position;
+        int numEnemies = 1;
+        for (int i = 0; i < numEnemies; i++) {
+        Entity enemy;
+        enemy.type = ENEMY;
+        enemy.init(playerPos.x, playerPos.y, 25, 200);
+        enemyList.push_back(enemy);
+    }
         
         cam.init(&player);
         cam.camera.zoom = map.getMapZoom();
@@ -63,6 +77,10 @@ struct Game {
                 iter--;
             }
         }
+
+        for (Entity& enemy : enemyList) {
+        enemy.update(&player, map, dt);
+    }
 
         for (auto iter = enemyList.begin(); iter != enemyList.end(); iter++) {
             int index = std::distance(enemyList.begin(), iter);

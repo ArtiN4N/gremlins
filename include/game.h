@@ -28,7 +28,7 @@ struct Game {
 
         vix::initMap(new_piskel_data, NEW_PISKEL_FRAME_WIDTH, NEW_PISKEL_FRAME_HEIGHT);
 
-        background = LoadTexture("assets/amps/map1.png");
+        background = LoadTexture("assets/maps/map1.png");
 
         inMainMenu = true;
     }

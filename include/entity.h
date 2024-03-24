@@ -27,6 +27,8 @@ struct Entity {
 
     Texture2D* tex;
 
+    bool player;
+
     void init(float x, float y, float rad, float spd) {
         position = {x, y};
 
@@ -40,6 +42,8 @@ struct Entity {
         speed = spd;
 
         dir = NORTH;
+
+        player = false;
     }
 
     void initProj(Direction direction) {
@@ -161,13 +165,18 @@ struct Entity {
 
             if (iX < 0 || iY < 0) continue;
 
-            if (!map.mapCollisionData[iY * map.width + iX]) continue;
+            if (map.mapCollisionData[iY * map.width + iX] == NONE) continue;
             
             Rectangle rec = {(float) (iX * map.tileSize), (float) (iY * map.tileSize), map.tileSize, map.tileSize};
 
             bool collide = vix::check_collision_circle_rec_this(position, radius, rec);
 
             if (!collide) continue;
+
+            if (map.mapCollisionData[iY * map.width + iX] == DOOR && player) {
+                map.switchMap(map.getNewMap(position));
+                continue;
+            }
             
             if (dir == EAST || dir == WEST) {
                 if (tileCollisionX(&prevPos, iX, iY, &foundX, collide)) continue;

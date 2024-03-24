@@ -38,14 +38,14 @@ struct Game {
         cam.init(&player);
 
         std::cout << "loading map" << std::endl;
-        map.initMap(4);
+        map.initMap(2);
         std::cout << "loaded map" << std::endl;
 
         Image menuData = LoadImage("assets/maps/map1.png");
         menuImage = LoadTextureFromImage(menuData);
         UnloadImage(menuData);
 
-        Image mapData = LoadImage("assets/maps/FULLmap4.png");
+        Image mapData = LoadImage("assets/maps/FULLmap2.png");
         mapImage = LoadTextureFromImage(mapData);
         UnloadImage(mapData);
 

@@ -4,11 +4,12 @@
 
 #include <cstdlib>
 
+#include "FULLmap2.h"
 #include "FULLmap4.h"
 
 unsigned int mapSizes[10][2] = {
     {0, 0},
-    {0, 0},
+    {256, 256},
     {0, 0},
     {64, 43},
     {0, 0},
@@ -38,6 +39,10 @@ struct Map {
         std::cout << "loading image data" << std::endl;
         unsigned int* image_data;
         switch (map) {
+            case 2:
+                image_data = fullmap2_data;
+                tileSize = 64;
+                break;
             case 4:
                 image_data = fullmap4_data;
                 tileSize = 64;

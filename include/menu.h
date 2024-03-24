@@ -1,11 +1,10 @@
 #pragma once
 
+#include <stdio.h>
 #include <raylib.h>
 #include <../include/game.h>
 
-extern Game game;
-
-void MainMenu() {
+void MainMenu(Game& game) {
     BeginDrawing();
     ClearBackground(BLACK);
 
@@ -38,8 +37,9 @@ void MainMenu() {
 
     Vector2 mousePos = GetMousePosition();
 
-    if (CheckCollisionPointRec(mousePos, play_button) || CheckCollisionPointRec(mousePos, settings_button))
+    if (CheckCollisionPointRec(mousePos, play_button) || CheckCollisionPointRec(mousePos, settings_button)){
         SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+        }
     else
         SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 

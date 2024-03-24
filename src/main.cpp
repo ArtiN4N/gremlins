@@ -4,21 +4,19 @@
 
 #include <stdio.h>
 
-Game game;
-
 int main() {
     SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(SCREEN_W, SCREEN_H, "template");
-
-
+    
+    Game game;
     game.init();
 
     game.background = LoadTexture("assets/menuimages/menubg.png");
 
     while (!WindowShouldClose()) {
-        if (game.inMainMenu == true) {
+        if (game.inMainMenu) {
             SetWindowTitle("GM2: Menu");
-            MainMenu();
+            MainMenu(game);
         } else {
             SetWindowTitle("GM2: A Gremlin's Revenge");
             float dt = GetFrameTime();

@@ -65,7 +65,7 @@ struct Entity {
         if (collide && prevPos->x < (iX * TILE_SIZE) && position.x > (iX * TILE_SIZE) && !*foundX) {
             position.x = prevPos->x;
             //prevPos->y = position.y;
-            actionVelocity.x = 0.f;
+            actionVelocity.x *= -.5f;
             *foundX = true;
             std::cout << "east collision with pos: " << iX << ":" << iY << std::endl;
             return true;
@@ -77,7 +77,7 @@ struct Entity {
         if (collide && prevPos->x > (iX * TILE_SIZE) + TILE_SIZE && position.x < (iX * TILE_SIZE) + TILE_SIZE && !*foundX) {
             position.x = prevPos->x;
             //prevPos->y = position.y;
-            actionVelocity.x = 0.f;
+            actionVelocity.x *= -.5f;
             *foundX = true;
             std::cout << "west collision with pos: " << iX << ":" << iY << std::endl;
             return true;
@@ -94,7 +94,7 @@ struct Entity {
         if (collide && prevPos->y < (iY * TILE_SIZE) && position.y > (iY * TILE_SIZE) && !*foundY) {
             position.y = prevPos->y;
             //prevPos->x = position.x;
-            actionVelocity.y = 0.f;
+            actionVelocity.y *= -.5f;
             *foundY = true;
             std::cout << "south collision with pos: " << iX << ":" << iY << std::endl;
             return true;
@@ -106,7 +106,7 @@ struct Entity {
         if (collide && prevPos->y > (iY * TILE_SIZE) + TILE_SIZE && position.y < (iY * TILE_SIZE) + TILE_SIZE && !*foundY) {
             position.y = prevPos->y;
             //prevPos->x = position.x;
-            actionVelocity.y = 0.f;
+            actionVelocity.y *= -.5f;
             *foundY = true;
             std::cout << "north collision with pos: " << iX << ":" << iY << std::endl;
             return true;

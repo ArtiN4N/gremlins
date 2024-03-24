@@ -122,7 +122,7 @@ struct Entity {
         else return tileCollisionSouth(prevPos, iX, iY, foundY, collide);
     }
 
-    bool update(Map map, float dt) {
+    bool update(Map* map, float dt) {
         bool ret = attack.update(dir, radius, dt);
 
         Vector2 prevPos = { position.x, position.y };
@@ -145,10 +145,10 @@ struct Entity {
         if (dashTrace < 0.f && dashTrace > -50.f) dashTrace = 0.f;
         
         // MAP COLLISION
-        Vector2 tileGridTL = {(float) ((int) (position.x - radius) / map.tileSize), (float) ((int) (position.y - radius) / map.tileSize)};
-        Vector2 tileGridTR = {(float) ((int) (position.x + radius) / map.tileSize), (float) ((int) (position.y - radius) / map.tileSize)};
-        Vector2 tileGridBL = {(float) ((int) (position.x - radius) / map.tileSize), (float) ((int) (position.y + radius) / map.tileSize)};
-        Vector2 tileGridBR = {(float) ((int) (position.x + radius) / map.tileSize), (float) ((int) (position.y + radius) / map.tileSize)};
+        Vector2 tileGridTL = {(float) ((int) (position.x - radius) / map->tileSize), (float) ((int) (position.y - radius) / map->tileSize)};
+        Vector2 tileGridTR = {(float) ((int) (position.x + radius) / map->tileSize), (float) ((int) (position.y - radius) / map->tileSize)};
+        Vector2 tileGridBL = {(float) ((int) (position.x - radius) / map->tileSize), (float) ((int) (position.y + radius) / map->tileSize)};
+        Vector2 tileGridBR = {(float) ((int) (position.x + radius) / map->tileSize), (float) ((int) (position.y + radius) / map->tileSize)};
 
         Vector2 tilesToCheck[] = { tileGridTL, tileGridTR, tileGridBL, tileGridBR };
 
@@ -162,17 +162,19 @@ struct Entity {
 
             if (iX < 0 || iY < 0) continue;
 
-            if (map.mapCollisionData[iY * map.width + iX] == NONE) continue;
+            if (map->mapCollisionData[iY * map->width + iX] == NONE) continue;
             
-            Rectangle rec = {(float) (iX * map.tileSize), (float) (iY * map.tileSize), map.tileSize, map.tileSize};
+            Rectangle rec = {(float) (iX * map->tileSize), (float) (iY * map->tileSize), map->tileSize, map->tileSize};
 
             bool collide = vix::check_collision_circle_rec_this(position, radius, rec);
 
             if (!collide) continue;
 
-            if (map.mapCollisionData[iY * map.width + iX] == DOOR && player) {
-                map.switchMap(map.getNewMap(position));
-                continue;
+            if (map->mapCollisionData[iY * map->width + iX] == DOOR && player) {
+                std::cout << "loading new map: " << map->getNewMap(position) << std::endl;
+                map->switchMap(map->getNewMap(position));
+
+                break;
             }
             
             if (dir == EAST || dir == WEST) {

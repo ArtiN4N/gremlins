@@ -6,6 +6,7 @@
 
 #include "FULLmap1.h"
 #include "FULLmap2.h"
+#include "FULLmap3.h"
 #include "FULLmap4.h"
 
 enum CollisionType { WALL = 0, DOOR, NONE };
@@ -47,21 +48,22 @@ struct Map {
     CollisionType* mapCollisionData;
 
     Texture2D mapTextures[4];
+    Texture2D* currentMapTex;
 
     void setup() {
-        Image map1Data = LoadImage("assets/maps/map1.png");
+        Image map1Data = LoadImage("assets/maps/FULLmap1.png");
         Texture2D map1Image = LoadTextureFromImage(map1Data);
         UnloadImage(map1Data);
 
-        Image map2Data = LoadImage("assets/maps/map2.png");
+        Image map2Data = LoadImage("assets/maps/FULLmap2.png");
         Texture2D map2Image = LoadTextureFromImage(map2Data);
         UnloadImage(map2Data);
 
-        Image map3Data = LoadImage("assets/maps/map3.png");
+        Image map3Data = LoadImage("assets/maps/FULLmap3.png");
         Texture2D map3Image = LoadTextureFromImage(map3Data);
         UnloadImage(map3Data);
 
-        Image map4Data = LoadImage("assets/maps/map4.png");
+        Image map4Data = LoadImage("assets/maps/FULLmap4.png");
         Texture2D map4Image = LoadTextureFromImage(map4Data);
         UnloadImage(map4Data);
 
@@ -71,19 +73,21 @@ struct Map {
         mapTextures[2] = map3Image;
         mapTextures[3] = map4Image;
         
-    }
+        currentMapTex = NULL;
+    }   
 
     void initMap(int map) {
         mapNum = map;
 
+
+        currentMapTex = &(mapTextures[mapNum - 1]);
+
+
         width = mapSizes[map - 1][0];
         height = mapSizes[map - 1][1];
 
-        std::cout << "alloc'ing map" << std::endl;
         mapCollisionData = (CollisionType*) malloc(sizeof(CollisionType) * mapSizes[map - 1][0] * mapSizes[map - 1][1]);
-        std::cout << "alloc'ed map" << std::endl;
 
-        std::cout << "loading image data" << std::endl;
         unsigned int* image_data;
         switch (map) {
             case 1:
@@ -92,6 +96,10 @@ struct Map {
                 break;
             case 2:
                 image_data = fullmap2_data;
+                tileSize = 64;
+                break;
+            case 3:
+                image_data = fullmap3_data;
                 tileSize = 64;
                 break;
             case 4:
@@ -103,7 +111,6 @@ struct Map {
                 tileSize = 64;
                 break;
         }
-        std::cout << "got image data" << std::endl;
 
         for (unsigned int y = 0; y < mapSizes[map - 1][1]; y++) {
             for (unsigned int x = 0; x < mapSizes[map - 1][0]; x++) {
@@ -134,8 +141,8 @@ struct Map {
         free(mapCollisionData);
     }
 
-    Texture2D getMapImage() {
-        return mapTextures[mapNum - 1];
+    Texture2D* getMapImage() {
+        return &(mapTextures[mapNum - 1]);
     }
 
     int getNewMap(Vector2 position) {
@@ -157,9 +164,7 @@ struct Map {
     }
 
     void switchMap(int map) {
-        std::cout << "switching map" << std::endl;
         unloadMap();
-        std::cout << "unloaded assets" << std::endl;
         initMap(map);
     }
 

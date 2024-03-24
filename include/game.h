@@ -53,7 +53,7 @@ struct Game {
         for (auto iter = projectileList.begin(); iter != projectileList.end(); iter++) {
             int index = std::distance(projectileList.begin(), iter);
 
-            bool alive = projectileList[index].update(map, dt);
+            bool alive = projectileList[index].update(&map, dt);
             
             if (!alive) {
                 projectileList.erase(projectileList.begin() + index);
@@ -64,7 +64,7 @@ struct Game {
         for (auto iter = enemyList.begin(); iter != enemyList.end(); iter++) {
             int index = std::distance(projectileList.begin(), iter);
 
-            bool alive = enemyList[index].update(map, dt);
+            bool alive = enemyList[index].update(&map, dt);
             
             if (!alive) {
                 enemyList.erase(enemyList.begin() + index);
@@ -72,7 +72,7 @@ struct Game {
             }
         }
 
-        player.update(map, dt);
+        player.update(&map, dt);
 
         cam.update();
     }
@@ -81,12 +81,18 @@ struct Game {
         ClearBackground(BLACK);
         BeginMode2D(cam.camera);
 
-        Rectangle sourceRec = { 0.0f, 0.0f, (float) map.getMapImage().width, (float) map.getMapImage().height };
 
-        Rectangle destRec = { 0, 0, (float) map.getMapImage().width, (float) map.getMapImage().height };
+        //Texture2D mapTex = map.mapTextures[3];
+
+        
+        Texture2D mapTex = *(map.currentMapTex);
+
+        Rectangle sourceRec = { 0.0f, 0.0f, (float) mapTex.width, (float) mapTex.height };
+
+        Rectangle destRec = { 0, 0, (float) mapTex.width, (float) mapTex.height };
 
         // draw backgroudd img scaled to the screen size
-        DrawTexturePro(map.getMapImage(), sourceRec, destRec, (Vector2){ 0, 0 }, 0.0f, WHITE);
+        DrawTexturePro(mapTex, sourceRec, destRec, (Vector2){ 0, 0 }, 0.0f, WHITE);
 
         for (int iY = 0; iY < map.height; iY++) {
             for (int iX = 0; iX < map.width; iX++) {

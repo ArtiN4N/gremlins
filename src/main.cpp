@@ -16,12 +16,14 @@ int main() {
         if (game.inMainMenu) {
             SetWindowTitle("GM2: Menu");
             MainMenu(game);
+            UpdateMusicStream(game.menuMusic);
         } else {
             SetWindowTitle("GM2: A Gremlin's Revenge");
             float dt = GetFrameTime();
 
             game.input(dt);
             game.update(dt);
+            UpdateMusicStream(game.menuMusic);
 
             BeginDrawing();
             game.draw();

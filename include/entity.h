@@ -164,7 +164,7 @@ struct Entity {
 
             if (map->mapCollisionData[iY * map->width + iX] == NONE) continue;
             
-            Rectangle rec = {(float) (iX * map->tileSize), (float) (iY * map->tileSize), map->tileSize, map->tileSize};
+            Rectangle rec = {(float) (iX * map->tileSize), (float) (iY * map->tileSize), (float) map->tileSize, (float) map->tileSize};
 
             bool collide = vix::check_collision_circle_rec_this(position, radius, rec);
 

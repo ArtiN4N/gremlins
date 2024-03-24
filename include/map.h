@@ -8,6 +8,7 @@
 #include "FULLmap2.h"
 #include "FULLmap3.h"
 #include "FULLmap4.h"
+#include "FULLmap5.h"
 
 enum CollisionType { WALL = 0, DOOR, NONE };
 
@@ -16,7 +17,7 @@ unsigned int mapSizes[10][2] = {
     {64, 64},
     {48, 64},
     {64, 43},
-    {0, 0},
+    {64, 39},
     {0, 0},
     {0, 0},
     {0, 0},
@@ -29,7 +30,7 @@ Vector2 mapSpawns[10][2] = {
     {{1920, 128}, {1500, 4000}},
     {{2900, 1000}, {1530, 4000}},
     {{300, 300}, {3650, 2000}},
-    {0, 0},
+    {{128, 1664}, {128, 1664}},
     {0, 0},
     {0, 0},
     {0, 0},
@@ -48,34 +49,20 @@ struct Map {
 
     CollisionType* mapCollisionData;
 
-    Texture2D mapTextures[4];
+    Texture2D mapTextures[5];
     Texture2D* currentMapTex;
 
     void setup() {
         mapNum = 0;
         oldMapNum = 0;
 
-        Image map1Data = LoadImage("assets/maps/FULLmap1.png");
-        Texture2D map1Image = LoadTextureFromImage(map1Data);
-        UnloadImage(map1Data);
+        for (int i = 0; i < 5; i++) {
+            Image mapData = LoadImage(TextFormat("assets/maps/FULLmap%d.png", i+1));
+            Texture2D mapImage = LoadTextureFromImage(mapData);
+            UnloadImage(mapData);
 
-        Image map2Data = LoadImage("assets/maps/FULLmap2.png");
-        Texture2D map2Image = LoadTextureFromImage(map2Data);
-        UnloadImage(map2Data);
-
-        Image map3Data = LoadImage("assets/maps/FULLmap3.png");
-        Texture2D map3Image = LoadTextureFromImage(map3Data);
-        UnloadImage(map3Data);
-
-        Image map4Data = LoadImage("assets/maps/FULLmap4.png");
-        Texture2D map4Image = LoadTextureFromImage(map4Data);
-        UnloadImage(map4Data);
-
-        
-        mapTextures[0] = map1Image;
-        mapTextures[1] = map2Image;
-        mapTextures[2] = map3Image;
-        mapTextures[3] = map4Image;
+            mapTextures[i] = mapImage;
+        }
         
         currentMapTex = NULL;
     }   
@@ -93,26 +80,25 @@ struct Map {
         mapCollisionData = (CollisionType*) malloc(sizeof(CollisionType) * mapSizes[map - 1][0] * mapSizes[map - 1][1]);
 
         unsigned int* image_data;
+        tileSize = 64;
         switch (mapNum) {
             case 1:
                 image_data = fullmap1_data;
-                tileSize = 64;
                 break;
             case 2:
                 image_data = fullmap2_data;
-                tileSize = 64;
                 break;
             case 3:
                 image_data = fullmap3_data;
-                tileSize = 64;
                 break;
             case 4:
                 image_data = fullmap4_data;
-                tileSize = 64;
+                break;
+            case 5:
+                image_data = fullmap5_data;
                 break;
             default:
                 image_data = fullmap4_data;
-                tileSize = 64;
                 break;
         }
 
@@ -138,6 +124,8 @@ struct Map {
                 return 1.f;
             case 4: 
                 return 1.f;
+            case 5:
+                return .75f;
             default:
                 return 1.f;
         }
@@ -157,6 +145,8 @@ struct Map {
                 break;
             case 4:
                 if (oldMapNum != 0) version = 1;
+                break;
+            case 5:
                 break;
             default:
                 break;
@@ -185,6 +175,8 @@ struct Map {
                 else return 2;
             case 4:
                 return 3;
+            case 5:
+                return 1;
             default:
                 return 1;
         }

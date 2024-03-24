@@ -24,11 +24,11 @@ unsigned int mapSizes[10][2] = {
     {0, 0}
 };
 
-Vector2 mapSpawns[10] = {
-    {128, 1920},
-    {1920, 128},
-    {600, 600},
-    {300, 300},
+Vector2 mapSpawns[10][2] = {
+    {{128, 1300}, {4000, 1300}},
+    {{1920, 128}, {1500, 4000}},
+    {{2900, 1000}, {1530, 4000}},
+    {{300, 300}, {3650, 2000}},
     {0, 0},
     {0, 0},
     {0, 0},
@@ -43,7 +43,8 @@ struct Map {
 
     int tileSize;
 
-    int mapNum = 1;
+    int mapNum;
+    int oldMapNum;
 
     CollisionType* mapCollisionData;
 
@@ -51,6 +52,9 @@ struct Map {
     Texture2D* currentMapTex;
 
     void setup() {
+        mapNum = 0;
+        oldMapNum = 0;
+
         Image map1Data = LoadImage("assets/maps/FULLmap1.png");
         Texture2D map1Image = LoadTextureFromImage(map1Data);
         UnloadImage(map1Data);
@@ -77,6 +81,8 @@ struct Map {
     }   
 
     void initMap(int map) {
+        oldMapNum = mapNum;
+
         mapNum = map;
 
 
@@ -134,7 +140,24 @@ struct Map {
     }
 
     Vector2 getSpawnPos() {
-        return mapSpawns[mapNum - 1];
+        int version = 0;
+        switch (mapNum) {
+            case 1:
+                if (oldMapNum != 2) version = 1;
+                break;
+            case 2:
+                if (oldMapNum != 3) version = 1;
+                break;
+            case 3:
+                if (oldMapNum != 4) version = 1;
+                break;
+            case 4:
+                if (oldMapNum != 0) version = 1;
+                break;
+            default:
+                break;
+        }
+        return mapSpawns[mapNum - 1][version];
     }
 
     void unloadMap() {

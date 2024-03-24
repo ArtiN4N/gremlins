@@ -31,6 +31,8 @@ struct Entity {
 
     bool flagDeath;
 
+    float invincibility;
+
     Direction dir;
 
     AttackBox attack;
@@ -47,6 +49,8 @@ struct Entity {
         type = ty;
         heals = 0;
 
+        invincibility = 0.f;
+
         flagDeath = false;
 
         dir = NORTH;
@@ -57,16 +61,16 @@ struct Entity {
             case PLAYER:
                 gold = 0;
                 radius = 25.f;
-                speed = 350;
+                speed = 450;
                 hp = 100.f;
                 maxHP = hp;
                 damage = 25.f;
-                attack.init(70, 50, .3f, .05f, false);
+                attack.init(120, 80, .4f, .05f, false);
                 break;
             case HUMAN:
                 gold = 100;
                 radius = 35.f;
-                speed = 250;
+                speed = 100;
                 hp = 50.f;
                 maxHP = hp;
                 damage = 0.f;
@@ -74,23 +78,23 @@ struct Entity {
             case GHOST:
                 gold = 10;
                 radius = 20.f;
-                speed = 550;
+                speed = 250;
                 hp = 20.f;
                 maxHP = hp;
-                damage = 15.f;
+                damage = 10.f;
                 break;
             case WIZARD:
                 gold = 5000;
                 radius = 40.f;
-                speed = 450;
+                speed = 200;
                 hp = 100.f;
                 maxHP = hp;
-                damage = 25.f;
+                damage = 15.f;
                 break;
             case GRANDW:
                 gold = 100000;
                 radius = 80.f;
-                speed = 600;
+                speed = 250;
                 hp = 1000.f;
                 maxHP = hp;
                 damage = 25.f;
@@ -107,6 +111,7 @@ struct Entity {
 
     void takeDamage(float dmg) {
         hp -= dmg;
+        if (type == PLAYER) invincibility = 1.f;
         checkDeath();
     }
 
@@ -193,6 +198,9 @@ struct Entity {
     }
 
     bool update(Map* map, bool* switchMapFlag, float dt) {
+        if (invincibility > 0.f) invincibility -= dt;
+        if (invincibility < 0.f) invincibility = 0.f;
+
         bool ret = attack.update(dir, radius, dt);
 
         Vector2 prevPos = { position.x, position.y };

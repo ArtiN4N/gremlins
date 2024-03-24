@@ -130,8 +130,6 @@ struct Game {
 
     void update(float dt) {
 
-        std::cout << "updating proj" << std::endl;
-
         for (auto iter = projectileList.begin(); iter != projectileList.end(); iter++) {
             int index = std::distance(projectileList.begin(), iter);
 
@@ -155,23 +153,29 @@ struct Game {
             }
         }
 
-        std::cout << "updating player" << std::endl;
-
         player.update(&map, &switchMapFlag, dt);
         if (player.flagDeath) {
             flagRestart = true;
         }
 
-        if (player.attack.active) {
-            for (Entity& enemy : enemyList) {
-                
-                if (enemy.radius + player.radius > Vector2Distance(enemy.position, player.position)) {
+        for (Entity& enemy : enemyList) {
+            if (player.attack.active) {
+                Rectangle rec = {player.attack.getPos(player.position).x, player.attack.getPos(player.position).y, player.attack.realSize.x, player.attack.realSize.y };
+                if (vix::check_collision_circle_rec_this(enemy.position, enemy.radius, rec)) {
                     player.attack.active = false;
                     enemy.takeDamage(player.damage);
                     if (enemy.flagDeath) {
                         player.gold += enemy.gold;
                     }
+
+                    enemy.actionVelocity = Vector2Scale(Vector2Subtract(enemy.position, player.position), 60.f);
                 }
+            }
+
+            if (enemy.radius + player.radius > Vector2Distance(enemy.position, player.position)) {
+                if (enemy.type != GHOST || player.invincibility != 0.f) continue;
+                player.takeDamage(enemy.damage);
+                player.actionVelocity = Vector2Scale(Vector2Subtract(player.position, enemy.position), 30.f);
             }
         }
 

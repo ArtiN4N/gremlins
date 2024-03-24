@@ -92,6 +92,8 @@ struct HumanSprites {
 
         Rectangle destRec = { en.position.x, en.position.y - 10, en.radius * 3, en.radius * 3 };
 
+        DrawCircleV(en.position, en.radius, BLUE);
+
         DrawTexturePro(drawing, sourceRec, destRec, { en.radius * 3/2, en.radius * 3/2 }, 0.f, WHITE);
         en.attack.debugDraw(en.position);
     }
@@ -131,6 +133,8 @@ struct GhostSprites {
         Rectangle sourceRec = { 0.0f, 0.0f, (float) drawing.width, (float) drawing.height };
 
         Rectangle destRec = { en.position.x, en.position.y - 10, en.radius * 3, en.radius * 3 };
+
+        DrawCircleV(en.position, en.radius, BLUE);
 
         DrawTexturePro(drawing, sourceRec, destRec, { en.radius * 3/2, en.radius * 3/2 }, 0.f, WHITE);
         en.attack.debugDraw(en.position);
@@ -174,6 +178,8 @@ struct WizardSprites {
 
         Rectangle destRec = { en.position.x, en.position.y - 10, en.radius * 3, en.radius * 3 };
 
+        DrawCircleV(en.position, en.radius, BLUE);
+
         DrawTexturePro(drawing, sourceRec, destRec, { en.radius * 3/2, en.radius * 3/2 }, 0.f, WHITE);
         en.attack.debugDraw(en.position);
     }
@@ -213,6 +219,8 @@ struct GwizardSprites {
     void draw(Entity en) {
         Texture2D drawing = *(en.tex);
         Rectangle sourceRec = { 0.0f, 0.0f, (float) drawing.width, (float) drawing.height };
+
+        DrawCircleV(en.position, en.radius, BLUE);
 
         Rectangle destRec = { en.position.x, en.position.y - 10, en.radius * 3, en.radius * 3 };
 

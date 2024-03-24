@@ -11,6 +11,8 @@
 struct Game {
     Entity player;
     Viewport cam;
+    Texture2D background;
+    bool inMainMenu = true;
 
     std::vector<Entity> enemyList;
     std::vector<Entity> projectileList;

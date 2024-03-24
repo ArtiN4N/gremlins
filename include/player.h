@@ -7,9 +7,40 @@
 #include <vector>
 
 
-void playerInitAttacks(Entity* player) {
+struct PlayerSprites {
+    Texture2D idle[4];
+
+    Texture2D walk[4];
+
+    void init() {
+        for (int i = 0; i < 4; i++) {
+            Image img = LoadImage(TextFormat("assets/gramps/idle%d.png", i + 1));
+            idle[i] = LoadTextureFromImage(img);
+            UnloadImage(img);
+        }
+
+        for (int i = 0; i < 4; i++) {
+            Image img = LoadImage(TextFormat("assets/gramps/walk%d.png", i + 1));
+            walk[i] = LoadTextureFromImage(img);
+            UnloadImage(img);
+        }
+    }
+
+    void unload() {
+        for (int i = 0; i < 4; i++) {
+            UnloadTexture(idle[i]);
+        }
+        for (int i = 0; i < 4; i++) {
+            UnloadTexture(walk[i]);
+        }
+    }
+};
+
+void playerInit(Entity* player, PlayerSprites* sprites) {
     player->attack.init(70, 50, .3f, .05f, false);
+    player->tex = &(sprites->idle[0]);
 }
+
 
 void playerInputHandle(Entity* player, std::vector<Entity>* projectileList, float dt) {
 

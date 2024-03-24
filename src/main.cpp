@@ -1,39 +1,36 @@
 #include <../include/raylib.h>
-#include <../include/defs.h>
+#include <../include/game.h>
+#include <../include/menu.h>
+
 #include <stdio.h>
-
-int SCREEN_W = 1600;
-int SCREEN_H = 800;
-
-
-struct Entity {
-    Vector2 position;
-
-    void draw() {
-        DrawCircleV(position, 10, RED);
-    }
-};
 
 int main() {
     SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(SCREEN_W, SCREEN_H, "template");
+    
+    Game game;
+    game.init();
 
-    Entity player;
-    player.position = {100, 100};
+    game.background = LoadTexture("assets/menuimages/menubg.png");
 
     while (!WindowShouldClose()) {
-        //float dt = GetFrameTime();
+        if (game.inMainMenu) {
+            SetWindowTitle("GM2: Menu");
+            MainMenu(game);
+        } else {
+            SetWindowTitle("GM2: A Gremlin's Revenge");
+            float dt = GetFrameTime();
 
-        BeginDrawing();
+            game.input(dt);
+            game.update(dt);
 
-        ClearBackground(BLACK);
-
-        player.draw();
-        
-        DrawFPS(20, 20);
-
-        EndDrawing();
+            BeginDrawing();
+            game.draw();
+            EndDrawing();
+        }
     }
+
+    UnloadTexture(game.background);
 
     CloseWindow();
     return 0;

@@ -1,2 +1,5 @@
 *.save
 bin/*
+bin/dbug
+bin/
+bin

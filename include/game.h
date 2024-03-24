@@ -7,6 +7,7 @@
 #include <camera.h>
 #include <player.h>
 #include <enemy.h>
+#include <ai.h>
 
 #include "sprites.h"
 
@@ -25,6 +26,7 @@ struct Game {
     GhostSprites ghostSprites;
     WizardSprites wizardSprites;
     GwizardSprites GWizardSprites;
+    ProjectileSprites projSprites;
 
     Map map;
 
@@ -49,7 +51,7 @@ struct Game {
         map.setup();
         
         std::vector<EnemyInfo> enemyInfo = {};
-        map.initMap(3, &enemyInfo);
+        map.initMap(4, &enemyInfo);
 
         switchMapFlag = false;
 
@@ -58,6 +60,7 @@ struct Game {
         ghostSprites.init();
         wizardSprites.init();
         GWizardSprites.init();
+        projSprites.init();
 
         std::cout << "loaded sprites" << std::endl;
 
@@ -135,6 +138,13 @@ struct Game {
 
             bool alive = projectileList[index].update(&map, &switchMapFlag, dt);
             
+            if (projectileList[index].radius + player.radius > Vector2Distance(projectileList[index].position, player.position)) {
+                if (player.invincibility != 0.f) continue;
+                player.takeDamage(projectileList[index].damage);
+                player.actionVelocity = Vector2Scale(Vector2Subtract(player.position, projectileList[index].position), 30.f);
+                alive = false;
+            }
+
             if (!alive) {
                 projectileList.erase(projectileList.begin() + index);
                 iter--;
@@ -145,13 +155,33 @@ struct Game {
             int index = std::distance(enemyList.begin(), iter);
 
             enemyList[index].update(&map, &switchMapFlag, dt);
-            basicAI(&enemyList[index], &player, dt);
+            //basicAI(&enemyList[index], &player, dt);
+
+            switch (enemyList[index].type) {
+                case HUMAN:
+                    humanAI(&enemyList[index], &player, dt);
+                    break;
+                case GHOST:
+                    ghostAI(&enemyList[index], &player, dt);
+                    break;
+                case WIZARD:
+                    wizardAI(&enemyList[index], &player, &projectileList, dt);
+                    break;
+                case GRANDW:
+                    wizardAI(&enemyList[index], &player, &projectileList, dt);
+                    break;
+                default:
+                    break;
+            }
+
+            
 
             if (enemyList[index].flagDeath) {
                 enemyList.erase(enemyList.begin() + index);
                 iter--;
             }
         }
+        
 
         player.update(&map, &switchMapFlag, dt);
         if (player.flagDeath) {
@@ -245,6 +275,10 @@ struct Game {
             }
         }
 
+        for (Entity p : projectileList) {
+            projSprites.draw(p);
+        }
+
 
         //item system
         size_t items_list_length = vix::items_list.size();
@@ -290,6 +324,7 @@ struct Game {
         ghostSprites.unload();
         wizardSprites.unload();
         GWizardSprites.unload();
+        projSprites.unload();
 
         map.unloadMap();
         enemyList.clear();

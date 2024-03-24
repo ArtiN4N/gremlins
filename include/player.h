@@ -68,14 +68,6 @@ void playerInputHandle(Entity* player, std::vector<Entity>* projectileList, floa
         player->dashTrace = 3000;
     }
 
-    if (IsKeyPressed(KEY_C)) {
-        Entity arrow;
-        arrow.init(player->position.x, player->position.y, PROJECTILE);
-        arrow.initProj(player->dir);
-
-        projectileList->push_back(arrow);
-    }
-
     if (IsKeyPressed(KEY_A) && player->hp < player->maxHP && player-> heals > 0) {
         player->heals--;
         player->hp += 50.f;

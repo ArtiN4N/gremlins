@@ -19,6 +19,10 @@ struct Entity {
     float hp;
     float maxHP;
 
+    float alertRadius;
+
+    float shootCooldown;
+
     float damage;
 
     int gold;
@@ -49,6 +53,8 @@ struct Entity {
         type = ty;
         heals = 0;
 
+        shootCooldown = 0.f;
+
         invincibility = 0.f;
 
         flagDeath = false;
@@ -65,6 +71,7 @@ struct Entity {
                 hp = 100.f;
                 maxHP = hp;
                 damage = 25.f;
+                alertRadius = 0.f;
                 attack.init(120, 80, .4f, .05f, false);
                 break;
             case HUMAN:
@@ -73,6 +80,7 @@ struct Entity {
                 speed = 100;
                 hp = 50.f;
                 maxHP = hp;
+                alertRadius = 200.f;
                 damage = 0.f;
                 break;
             case GHOST:
@@ -81,6 +89,7 @@ struct Entity {
                 speed = 250;
                 hp = 20.f;
                 maxHP = hp;
+                alertRadius = 300.f;
                 damage = 10.f;
                 break;
             case WIZARD:
@@ -90,6 +99,7 @@ struct Entity {
                 hp = 100.f;
                 maxHP = hp;
                 damage = 15.f;
+                alertRadius = 550.f;
                 break;
             case GRANDW:
                 gold = 100000;
@@ -98,6 +108,7 @@ struct Entity {
                 hp = 1000.f;
                 maxHP = hp;
                 damage = 25.f;
+                alertRadius = 800.f;
                 break;
             case PROJECTILE:
                 radius = 5.f;
@@ -105,7 +116,7 @@ struct Entity {
                 hp = 1.f;
                 maxHP = hp;
                 damage = 10.f;
-                attack.init(10, 100, 1.f, .0f, true);
+                attack.init(10, 10, 1.f, .0f, true);
         }
     }
 
@@ -121,25 +132,11 @@ struct Entity {
         flagDeath = true;
     }
 
-    void initProj(Direction direction) {
+    void initProj(Vector2 direction) {
         if (!attack.projectile) return;
 
-        dir = direction;
-
-        switch (dir) {
-            case NORTH:
-                moveVelocity.y = -speed;
-                break;
-            case SOUTH:
-                moveVelocity.y = speed;
-                break;
-            case WEST:
-                moveVelocity.x = -speed;
-                break;
-            case EAST:
-                moveVelocity.x = speed;
-                break;
-        }
+        std::cout << direction.x << std::endl;
+        moveVelocity = Vector2Scale(direction, speed);
     }
 
     bool tileCollisionEast(Vector2* prevPos, int iX, int iY, bool* foundX, bool collide) {
@@ -238,6 +235,7 @@ struct Entity {
         bool foundY = false;
 
         for (int i = 0; i < 4; i++) {
+            if (type == PROJECTILE) break;
             
             int iX = (int) tilesToCheck[i].x;
             int iY = (int) tilesToCheck[i].y;

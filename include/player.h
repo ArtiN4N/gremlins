@@ -12,23 +12,37 @@ void playerInitAttacks(Entity* player) {
 }
 
 void playerInputHandle(Entity* player, std::vector<Entity>* projectileList, float dt) {
-    player->moveVelocity = { 0.f, 0.f };
-    if (IsKeyDown(KEY_LEFT)) {
-        player->moveVelocity.x = -player->speed;
+
+    if (IsKeyPressed(KEY_LEFT)) {
+        player->moveVelocity.x -= player->speed;
         player->dir = WEST;
+    } else if (IsKeyReleased(KEY_LEFT)) {
+        player->moveVelocity.x += player->speed;
     }
-    if (IsKeyDown(KEY_RIGHT)) {
-        player->moveVelocity.x = player->speed;
+
+    if (IsKeyPressed(KEY_RIGHT)) {
+        player->moveVelocity.x += player->speed;
         player->dir = EAST;
+    } else if (IsKeyReleased(KEY_RIGHT)) {
+        player->moveVelocity.x += player->speed;
     }
-    if (IsKeyDown(KEY_UP)) {
-        player->moveVelocity.y = -player->speed;
+
+
+    if (IsKeyPressed(KEY_UP)) {
+        player->moveVelocity.y -= player->speed;
         player->dir = NORTH;
+    } else if (IsKeyReleased(KEY_UP)) {
+        player->moveVelocity.y += player->speed;
     }
-    if (IsKeyDown(KEY_DOWN)) {
-        player->moveVelocity.y = player->speed;
-        player->dir = SOUTH;
+
+    if (IsKeyPressed(KEY_DOWN)) {
+        player->moveVelocity.y += player->speed;
+        player->dir = EAST;
+    } else if (IsKeyReleased(KEY_DOWN)) {
+        player->moveVelocity.y += player->speed;
     }
+
+
 
     if (IsKeyPressed(KEY_Z) && player->attack.ready) player->attack.active = true;
 

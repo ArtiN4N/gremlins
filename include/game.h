@@ -184,15 +184,18 @@ struct Game {
         
 
         player.update(&map, &switchMapFlag, dt);
+        playerSprites.update(&player, dt);
         if (player.flagDeath) {
             flagRestart = true;
         }
 
+        bool dmgflag;
         for (Entity& enemy : enemyList) {
             if (player.attack.active) {
                 Rectangle rec = {player.attack.getPos(player.position).x, player.attack.getPos(player.position).y, player.attack.realSize.x, player.attack.realSize.y };
-                if (vix::check_collision_circle_rec_this(enemy.position, enemy.radius, rec)) {
-                    player.attack.active = false;
+                if (vix::check_collision_circle_rec_this(enemy.position, enemy.radius, rec) && player.canDamage) {
+                    
+                    dmgflag = true;
                     enemy.takeDamage(player.damage);
                     if (enemy.flagDeath) {
                         player.gold += enemy.gold;
@@ -208,6 +211,7 @@ struct Game {
                 player.actionVelocity = Vector2Scale(Vector2Subtract(player.position, enemy.position), 30.f);
             }
         }
+        if (dmgflag) player.canDamage = false;
 
         if (switchMapFlag) {
             

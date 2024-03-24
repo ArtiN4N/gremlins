@@ -33,7 +33,7 @@ struct Game {
         menuImage = LoadTextureFromImage(menuData);
         UnloadImage(menuData);
 
-        Image mapData = LoadImage("assets/maps/FULLmap4.png");
+        Image mapData = LoadImage("assets/maps/FULLmap1.png");
         mapImage = LoadTextureFromImage(mapData);
         UnloadImage(mapData);
 

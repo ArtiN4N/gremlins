@@ -37,9 +37,19 @@ void playerInputHandle(Entity* player, std::vector<Entity>* projectileList, floa
 
     if (IsKeyPressed(KEY_DOWN)) {
         player->moveVelocity.y += player->speed;
-        player->dir = EAST;
+        player->dir = SOUTH;
     } else if (IsKeyReleased(KEY_DOWN)) {
         player->moveVelocity.y -= player->speed;
+    }
+
+    if (player->moveVelocity.x == 0.f && (player->dir == EAST || player->dir == WEST)) {
+        if (player->moveVelocity.y > 0.f) player->dir = SOUTH;
+        else if (player->moveVelocity.y < 0.f) player->dir = NORTH;
+    }
+
+    if (player->moveVelocity.y == 0.f && (player->dir == NORTH || player->dir == SOUTH)) {
+        if (player->moveVelocity.x > 0.f) player->dir = EAST;
+        else if (player->moveVelocity.x < 0.f) player->dir = WEST;
     }
 
 

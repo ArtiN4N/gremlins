@@ -2,13 +2,16 @@
 
 #include <raylib.h>
 #include <defs.h>
+#include "map.h"
 #include <entity.h>
 #include <camera.h>
 #include <player.h>
 #include <enemy.h>
 
+#include "sprites.h"
+
 #include "col.hpp"
-#include "FULLmap4.h"
+
 
 #include <vector>
 
@@ -16,7 +19,10 @@ struct Game {
     Entity player;
 
     PlayerSprites playerSprites;
-    EnemySprites enemySprites;
+    HumanSprites humanSprites;
+    GhostSprites ghostSprites;
+    WizardSprites wizardSprites;
+    GwizardSprites GWizardSprites;
 
     Map map;
 
@@ -25,25 +31,31 @@ struct Game {
     
     bool inMainMenu;
 
+    bool switchMapFlag;
+
     std::vector<Entity> enemyList;
     std::vector<Entity> projectileList;
 
     void init() {
         map.setup();
-        map.initMap(2);
+        
+        std::vector<EnemyInfo>* enemyInfo = {};
+        map.initMap(2, enemyInfo);
+
+        switchMapFlag = false;
 
         playerSprites.init();
-        enemySprites.init();
+        humanSprites.init();
+        ghostSprites.init();
+        wizardSprites.init();
+        GWizardSprites.init();
 
         Vector2 spawn = map.getSpawnPos();
-
-        Entity enemy;
-        enemy.init(spawn.x, spawn.y, 30, 400);
-        enemyInit(&enemy, &enemySprites);
-        enemyList.push_back(enemy);
         
-        player.init(spawn.x, spawn.y, 25, 350);
-        playerInit(&player, &playerSprites);
+        player.init(spawn.x, spawn.y, PLAYER);
+        playerSprites.initEntity(&player);
+
+        addEntities(enemyInfo);
         
         cam.init(&player);
         cam.camera.zoom = map.getMapZoom();
@@ -55,8 +67,39 @@ struct Game {
         inMainMenu = true;
     }
 
+    void addEntities(std::vector<EnemyInfo>* entityInfo) {
+        for (EnemyInfo info : *entityInfo) {
+            Entity enemy;
+            enemy.init(info.spawn.x, info.spawn.y, info.type);
+
+            switch (info.type) {
+                case HUMAN:
+                    humanSprites.initEntity(&enemy);
+                    break;
+                case GHOST:
+                    ghostSprites.initEntity(&enemy);
+                    break;
+                case WIZARD:
+                    wizardSprites.initEntity(&enemy);
+                    break;
+                case GRANDW:
+                    GWizardSprites.initEntity(&enemy);
+                    break;
+                default:
+                    break;
+            }
+
+            enemyList.push_back(enemy);
+        }
+    }
+
     void input(float dt) {
         playerInputHandle(&player, &projectileList, dt);
+
+        if (IsKeyPressed(KEY_EQUAL)) cam.camera.zoom += .25f;
+        if (IsKeyPressed(KEY_MINUS)) cam.camera.zoom -= .25f;
+
+        if (cam.camera.zoom < .25f) cam.camera.zoom = .25f;
     }
 
     void update(float dt) {
@@ -64,7 +107,7 @@ struct Game {
         for (auto iter = projectileList.begin(); iter != projectileList.end(); iter++) {
             int index = std::distance(projectileList.begin(), iter);
 
-            bool alive = projectileList[index].update(&map, dt);
+            bool alive = projectileList[index].update(&map, &switchMapFlag, dt);
             
             if (!alive) {
                 projectileList.erase(projectileList.begin() + index);
@@ -73,11 +116,24 @@ struct Game {
         }
 
         for (Entity& enemy : enemyList) {
-            enemy.update(&map, dt);
+            enemy.update(&map, &switchMapFlag, dt);
             basicAI(&enemy, &player, dt);
         }
 
-        player.update(&map, dt);
+        player.update(&map, &switchMapFlag, dt);
+
+        if (switchMapFlag) {
+            std::cout << "loading new map" << std::endl;
+
+            std::vector<EnemyInfo>* enemyInfo = {};
+            map.switchMap(map.getNewMap(player.position), enemyInfo);
+            enemyList.clear();
+
+            player.position = map.getSpawnPos();
+            switchMapFlag = false;
+
+            addEntities(enemyInfo);
+        }
 
         cam.update();
     }
@@ -113,16 +169,30 @@ struct Game {
 
         
 
-        for (Entity e : projectileList) {
-            e.draw();
-        }
+        //for (Entity e : projectileList) {
+            //projectileSprites.draw(e);
+        //}
 
         for (Entity e : enemyList) {
-            e.draw();
+            switch (e.type) {
+                case HUMAN:
+                    humanSprites.draw(e);
+                    break;
+                case GHOST:
+                    ghostSprites.draw(e);
+                    break;
+                case WIZARD:
+                    wizardSprites.draw(e);
+                    break;
+                case GRANDW:
+                    GWizardSprites.draw(e);
+                    break;
+                default:
+                    break;
+            }
         }
 
-
-        player.draw();
+        playerSprites.draw(player);
 
         EndMode2D();
 
@@ -133,9 +203,13 @@ struct Game {
         UnloadTexture(menuImage);
 
         playerSprites.unload();
-        enemySprites.unload();
+        humanSprites.unload();
+        ghostSprites.unload();
+        wizardSprites.unload();
+        GWizardSprites.unload();
 
         map.unloadMap();
+        enemyList.clear();
         map.teardown();
     }
 };

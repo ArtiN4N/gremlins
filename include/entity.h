@@ -10,7 +10,6 @@
 
 #include "col.hpp"
 #include "map.h"
-
 struct Entity {
     Vector2 position;
 
@@ -28,25 +27,44 @@ struct Entity {
 
     Texture2D* tex;
 
-    bool player;
+    EntityType type;
 
-    void init(float x, float y, float rad, float spd) {
+    void init(float x, float y, EntityType type) {
         position = {x, y};
-
         moveVelocity = { 0.f, 0.f };
         actionVelocity = { 0.f, 0.f };
 
-        dashTrace = 0.f;
-
-        radius = rad;
-
-        speed = spd;
-
         dir = NORTH;
 
-        player = false;
-
         tex = NULL;
+
+        switch (type) {
+            case PLAYER:
+                radius = 25.f;
+                speed = 350;
+                attack.init(70, 50, .3f, .05f, false);
+                break;
+            case HUMAN:
+                radius = 35.f;
+                speed = 250;
+                break;
+            case GHOST:
+                radius = 20.f;
+                speed = 550;
+                break;
+            case WIZARD:
+                radius = 40.f;
+                speed = 450;
+                break;
+            case GRANDW:
+                radius = 80.f;
+                speed = 600;
+                break;
+            case PROJECTILE:
+                radius = 5.f;
+                speed = 1000;
+                attack.init(10, 100, 1.f, .0f, true);
+        }
     }
 
     void initProj(Direction direction) {
@@ -125,7 +143,7 @@ struct Entity {
         else return tileCollisionSouth(prevPos, iX, iY, foundY, collide);
     }
 
-    bool update(Map* map, float dt) {
+    bool update(Map* map, bool* switchMapFlag, float dt) {
         bool ret = attack.update(dir, radius, dt);
 
         Vector2 prevPos = { position.x, position.y };
@@ -177,10 +195,8 @@ struct Entity {
 
             if (!collide) continue;
 
-            if (map->mapCollisionData[iY * map->width + iX] == DOOR && player) {
-                std::cout << "loading new map" << std::endl;
-                map->switchMap(map->getNewMap(position));
-                position = map->getSpawnPos();
+            if (map->mapCollisionData[iY * map->width + iX] == DOOR && type == PLAYER) {
+                *switchMapFlag = true;
                 break;
             }
             
@@ -196,19 +212,5 @@ struct Entity {
         }
 
         return ret;
-    }
-
-
-    void draw() {
-        Texture2D drawing = *tex;
-        Rectangle sourceRec = { 0.0f, 0.0f, (float) drawing.width, (float) drawing.height };
-
-        Rectangle destRec = { position.x, position.y - 10, radius * 3, radius * 3 };
-        DrawCircleV(position, radius, RED);
-        // draw backgroudd img scaled to the screen size
-        
-        DrawTexturePro(drawing, sourceRec, destRec, { radius * 3/2, radius * 3/2 }, 0.f, WHITE);
-
-        attack.debugDraw(position);
     }
 };

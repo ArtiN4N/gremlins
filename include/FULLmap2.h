@@ -1,5 +1,9 @@
 #include <stdint.h>
 
+void map2Setup(std::vector<EnemyInfo>* infos) {
+    return;
+}
+
 /* Piskel data for "FULLmap2" */
 unsigned int fullmap2_data[4096] = {
 

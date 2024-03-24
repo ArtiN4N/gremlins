@@ -1,4 +1,14 @@
+#pragma once
+
+#include "raylib.h"
+
 #include <stdint.h>
+
+#include <vector>
+
+void map1Setup(std::vector<EnemyInfo>* infos) {
+    return;
+}
 
 /* Piskel data for "FULLmap1" */
 unsigned int fullmap1_data[4096] = {

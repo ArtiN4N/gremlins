@@ -6,43 +6,6 @@
 
 #include <vector>
 
-
-struct PlayerSprites {
-    Texture2D idle[4];
-
-    Texture2D walk[4];
-
-    void init() {
-        for (int i = 0; i < 4; i++) {
-            Image img = LoadImage(TextFormat("assets/gramps/idle%d.png", i + 1));
-            idle[i] = LoadTextureFromImage(img);
-            UnloadImage(img);
-        }
-
-        for (int i = 0; i < 4; i++) {
-            Image img = LoadImage(TextFormat("assets/gramps/walk%d.png", i + 1));
-            walk[i] = LoadTextureFromImage(img);
-            UnloadImage(img);
-        }
-    }
-
-    void unload() {
-        for (int i = 0; i < 4; i++) {
-            UnloadTexture(idle[i]);
-        }
-        for (int i = 0; i < 4; i++) {
-            UnloadTexture(walk[i]);
-        }
-    }
-};
-
-void playerInit(Entity* player, PlayerSprites* sprites) {
-    player->attack.init(70, 50, .3f, .05f, false);
-    player->tex = &(sprites->idle[1]);
-    player->player = true;
-}
-
-
 void playerInputHandle(Entity* player, std::vector<Entity>* projectileList, float dt) {
 
     if (IsKeyPressed(KEY_LEFT)) {
@@ -109,8 +72,7 @@ void playerInputHandle(Entity* player, std::vector<Entity>* projectileList, floa
 
     if (IsKeyPressed(KEY_C)) {
         Entity arrow;
-        arrow.init(player->position.x, player->position.y, 5, 1000);
-        arrow.attack.init(10, 100, 1.f, .0f, true);
+        arrow.init(player->position.x, player->position.y, PROJECTILE);
         arrow.initProj(player->dir);
 
         projectileList->push_back(arrow);

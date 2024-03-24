@@ -4,6 +4,10 @@
 
 #include <cstdlib>
 
+#include "defs.h"
+
+#include <vector>
+
 #include "FULLmap1.h"
 #include "FULLmap2.h"
 #include "FULLmap3.h"
@@ -38,6 +42,9 @@ Vector2 mapSpawns[10][2] = {
     {0, 0}
 };
 
+std::vector<EnemyInfo> mapEnemies[10] = {}; 
+std::vector<Vector2> mapItems[10] = {}; 
+
 struct Map {
     int width;
     int height;
@@ -65,9 +72,20 @@ struct Map {
         }
         
         currentMapTex = NULL;
+
+        map1Setup(&(mapEnemies[0]));
+        map2Setup(&(mapEnemies[1]));
+        map3Setup(&(mapEnemies[2]));
+        map4Setup(&(mapEnemies[3]));
+        map5Setup(&(mapEnemies[4]));
+        //map6Setup();
+        //map7Setup();
+        //map8Setup();
+        //map9Setup();
+        //map10Setup();
     }   
 
-    void initMap(int map) {
+    void initMap(int map, std::vector<EnemyInfo>* enemyInfo) {
         oldMapNum = mapNum;
 
         mapNum = map;
@@ -112,6 +130,8 @@ struct Map {
                 else mapCollisionData[y * width + x] = NONE;
             }
         }
+
+        enemyInfo = &(mapEnemies[mapNum - 1]);
     }
 
     float getMapZoom() {
@@ -182,11 +202,11 @@ struct Map {
         }
     }
 
-    void switchMap(int map) {
+    void switchMap(int map, std::vector<EnemyInfo>* enemyInfo) {
         std::cout << "unloading old map data" << std::endl;
         unloadMap();
         std::cout << "loading new map data" << std::endl;
-        initMap(map);
+        initMap(map, enemyInfo);
     }
 
     void teardown() {

@@ -1,6 +1,34 @@
 #include <stdint.h>
 
-/* Piskel data for "FULLmap2" */
+void map3Setup(std::vector<EnemyInfo>* infos) {
+    //spawn ghosts:
+    infos->push_back({GHOST, {2168, 769}});
+    infos->push_back({GHOST, {225, 419}});
+    infos->push_back({GHOST, {605, 411}});
+    infos->push_back({GHOST, {1368, 1566}});
+    infos->push_back({GHOST, {1691, 1572}});
+    infos->push_back({GHOST, {2820, 2143}});
+    infos->push_back({GHOST, {285, 1987}});
+    infos->push_back({GHOST, {1288, 3882}});
+    infos->push_back({GHOST, {1739, 3861}});
+    infos->push_back({GHOST, {1536, 3694}});
+
+    //spawn humans:
+    infos->push_back({HUMAN, {2645, 734}});
+    infos->push_back({HUMAN, {2896, 351}});
+    infos->push_back({HUMAN, {1136, 414}});
+    infos->push_back({HUMAN, {293, 1245}});
+    infos->push_back({HUMAN, {602, 1245}});
+    infos->push_back({HUMAN, {1235, 2341}});
+    infos->push_back({HUMAN, {1500, 2337}});
+    infos->push_back({HUMAN, {1818, 2412}});
+    infos->push_back({HUMAN, {1565, 2655}});
+
+    //spawn wizards
+    infos->push_back({WIZARD, {1063, 3919}});
+    infos->push_back({WIZARD, {2023, 3919}});
+}
+
 unsigned int fullmap3_data[4096] = {
 
 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 

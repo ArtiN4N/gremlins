@@ -9,6 +9,13 @@ int SCREEN_H = 800;
 
 enum Direction { NORTH = 0, EAST, SOUTH, WEST };
 
+enum EntityType { HUMAN = 0, WIZARD, GRANDW, GHOST, PLAYER, PROJECTILE };
+
+struct EnemyInfo {
+    EntityType type;
+    Vector2 spawn;
+};
+
 struct AttackBox {
     Vector2 offset;
     Vector2 size;

@@ -12,7 +12,7 @@
 enum CollisionType { WALL = 0, DOOR, NONE };
 
 unsigned int mapSizes[10][2] = {
-    {128, 1216},
+    {64, 64},
     {64, 64},
     {48, 64},
     {64, 43},
@@ -85,9 +85,7 @@ struct Map {
 
         mapNum = map;
 
-
         currentMapTex = &(mapTextures[mapNum - 1]);
-
 
         width = mapSizes[map - 1][0];
         height = mapSizes[map - 1][1];
@@ -95,7 +93,7 @@ struct Map {
         mapCollisionData = (CollisionType*) malloc(sizeof(CollisionType) * mapSizes[map - 1][0] * mapSizes[map - 1][1]);
 
         unsigned int* image_data;
-        switch (map) {
+        switch (mapNum) {
             case 1:
                 image_data = fullmap1_data;
                 tileSize = 64;
@@ -132,8 +130,14 @@ struct Map {
 
     float getMapZoom() {
         switch (mapNum) {
+            case 1:
+                return .5f;
             case 2:
                 return .5f;
+            case 3:
+                return 1.f;
+            case 4: 
+                return 1.f;
             default:
                 return 1.f;
         }
@@ -187,7 +191,9 @@ struct Map {
     }
 
     void switchMap(int map) {
+        std::cout << "unloading old map data" << std::endl;
         unloadMap();
+        std::cout << "loading new map data" << std::endl;
         initMap(map);
     }
 

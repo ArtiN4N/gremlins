@@ -171,9 +171,9 @@ struct Entity {
             if (!collide) continue;
 
             if (map->mapCollisionData[iY * map->width + iX] == DOOR && player) {
-                std::cout << "loading new map: " << map->getNewMap(position) << std::endl;
+                std::cout << "loading new map" << std::endl;
                 map->switchMap(map->getNewMap(position));
-
+                position = map->getSpawnPos();
                 break;
             }
             

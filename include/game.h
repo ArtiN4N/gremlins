@@ -27,13 +27,11 @@ struct Game {
 
     void init() {
         map.setup();
-        map.initMap(4);
+        map.initMap(2);
 
         playerSprites.init();
         
         Vector2 spawn = map.getSpawnPos();
-
-        printf("spawn = %.2f, %.2f\n", spawn.x, spawn.y);
 
         player.init(spawn.x, spawn.y, 25, 350);
         playerInit(&player, &playerSprites);

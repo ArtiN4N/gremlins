@@ -107,7 +107,7 @@ struct Game {
     }
 
     void input(float dt) {
-        playerInputHandle(&player, &enemyList, &projectileList, dt);
+        playerInputHandle(&player, &projectileList, dt);
 
         if (IsKeyPressed(KEY_EQUAL)) cam.camera.zoom += .25f;
         if (IsKeyPressed(KEY_MINUS)) cam.camera.zoom -= .25f;

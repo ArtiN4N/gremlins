@@ -26,20 +26,16 @@ struct Game {
     std::vector<Entity> projectileList;
 
     void init() {
-        playerSprites.init();
+        map.initMap(2);
 
-        Entity enemy;
-        enemy.init(500, 100, 25, 200);
-        enemyList.push_back(enemy);
+        playerSprites.init();
         
-        player.init(300, 300, 25, 350);
+        Vector2 spawn = map.getSpawnPos();
+        player.init(spawn.x, spawn.y, 25, 350);
         playerInit(&player, &playerSprites);
         
         cam.init(&player);
-
-        std::cout << "loading map" << std::endl;
-        map.initMap(2);
-        std::cout << "loaded map" << std::endl;
+        cam.camera.zoom = map.getMapZoom();
 
         Image menuData = LoadImage("assets/maps/map1.png");
         menuImage = LoadTextureFromImage(menuData);
@@ -100,8 +96,10 @@ struct Game {
 
         for (int iY = 0; iY < map.height; iY++) {
             for (int iX = 0; iX < map.width; iX++) {
-                if (map.mapCollisionData[iY * map.width + iX]) {
-                    DrawRectangle(iX * map.tileSize, iY * map.tileSize, map.tileSize, map.tileSize, RED);
+                if (map.mapCollisionData[iY * map.width + iX] != NONE) {
+                    Color color = RED;
+                    if (map.mapCollisionData[iY * map.width + iX]) color = BLUE;
+                    DrawRectangle(iX * map.tileSize, iY * map.tileSize, map.tileSize, map.tileSize, color);
                 }   
             }
         }

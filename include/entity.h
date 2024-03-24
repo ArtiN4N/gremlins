@@ -16,10 +16,16 @@ struct Entity {
     Vector2 moveVelocity;
     Vector2 actionVelocity;
 
+    float hp;
+
+    float damage;
+
     float dashTrace;
 
     float radius;
     float speed;
+
+    bool flagDeath;
 
     Direction dir;
 
@@ -36,6 +42,8 @@ struct Entity {
 
         type = ty;
 
+        flagDeath = false;
+
         dir = NORTH;
 
         tex = NULL;
@@ -44,29 +52,52 @@ struct Entity {
             case PLAYER:
                 radius = 25.f;
                 speed = 350;
+                hp = 100.f;
+                damage = 25.f;
                 attack.init(70, 50, .3f, .05f, false);
                 break;
             case HUMAN:
                 radius = 35.f;
                 speed = 250;
+                hp = 50.f;
+                damage = 0.f;
                 break;
             case GHOST:
                 radius = 20.f;
                 speed = 550;
+                hp = 20.f;
+                damage = 15.f;
                 break;
             case WIZARD:
                 radius = 40.f;
                 speed = 450;
+                hp = 100.f;
+                damage = 25.f;
                 break;
             case GRANDW:
                 radius = 80.f;
                 speed = 600;
+                hp = 1000.f;
+                damage = 25.f;
                 break;
             case PROJECTILE:
                 radius = 5.f;
                 speed = 1000;
+                hp = 1.f;
+                damage = 10.f;
                 attack.init(10, 100, 1.f, .0f, true);
         }
+    }
+
+    void takeDamage(float dmg) {
+        hp -= dmg;
+        checkDeath();
+    }
+
+    void checkDeath() {
+        if (hp > 0) return;
+
+        flagDeath = true;
     }
 
     void initProj(Direction direction) {

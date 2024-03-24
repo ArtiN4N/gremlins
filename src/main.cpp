@@ -27,6 +27,13 @@ int main() {
             game.draw();
             EndDrawing();
         }
+
+        if (game.flagRestart) {
+            printf("you died!\n");
+            game.unload();
+            game = {};
+            game.init();
+        }
     }
 
     game.unload();

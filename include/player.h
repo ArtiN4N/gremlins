@@ -47,8 +47,6 @@ void playerInputHandle(Entity* player, std::vector<Entity>* projectileList, floa
         else if (player->moveVelocity.x < 0.f) player->dir = WEST;
     }
 
-
-
     if (IsKeyPressed(KEY_Z) && player->attack.ready) player->attack.active = true;
 
     if (IsKeyPressed(KEY_X) && player->dashTrace == 0.f && !player->attack.active) {

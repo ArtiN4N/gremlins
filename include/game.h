@@ -33,14 +33,18 @@ struct Game {
 
     bool switchMapFlag;
 
+    bool flagRestart;
+
     std::vector<Entity> enemyList;
     std::vector<Entity> projectileList;
 
     void init() {
+        flagRestart = false;
+
         map.setup();
         
         std::vector<EnemyInfo> enemyInfo = {};
-        map.initMap(2, &enemyInfo);
+        map.initMap(4, &enemyInfo);
 
         switchMapFlag = false;
 
@@ -103,7 +107,7 @@ struct Game {
     }
 
     void input(float dt) {
-        playerInputHandle(&player, &projectileList, dt);
+        playerInputHandle(&player, &enemyList, &projectileList, dt);
 
         if (IsKeyPressed(KEY_EQUAL)) cam.camera.zoom += .25f;
         if (IsKeyPressed(KEY_MINUS)) cam.camera.zoom -= .25f;
@@ -124,12 +128,30 @@ struct Game {
             }
         }
 
-        for (Entity& enemy : enemyList) {
-            enemy.update(&map, &switchMapFlag, dt);
-            basicAI(&enemy, &player, dt);
+        for (auto iter = enemyList.begin(); iter != enemyList.end(); iter++) {
+            int index = std::distance(projectileList.begin(), iter);
+
+            enemyList[index].update(&map, &switchMapFlag, dt);
+            basicAI(&enemyList[index], &player, dt);
+
+            if (enemyList[index].flagDeath) {
+                enemyList.erase(enemyList.begin() + index);
+                iter--;
+            }
         }
 
         player.update(&map, &switchMapFlag, dt);
+        if (player.flagDeath) {
+            flagRestart = true;
+        }
+
+        if (player.attack.active) {
+            for (Entity enemy : enemyList) {
+                if (enemy.radius + player.radius < Vector2Distance(enemy.position, player.position)) {
+                    enemy.takeDamage(player.damage);
+                }
+            }
+        }
 
         if (switchMapFlag) {
             
@@ -177,12 +199,6 @@ struct Game {
                 }   
             }
         }
-
-        
-
-        //for (Entity e : projectileList) {
-            //projectileSprites.draw(e);
-        //}
 
         for (Entity e : enemyList) {
             switch (e.type) {

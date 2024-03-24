@@ -1,4 +1,4 @@
 for i in {1..10}
 do
-    convert -resize 1028x1028 assets/mapsRAW/0$i.jpg assets/maps/map$i.jpg
+    convert -resize 4096x4096 assets/mapsRAW/0$i.jpg assets/maps/FULLmap$i.jpg
 done

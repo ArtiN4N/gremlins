@@ -15,6 +15,7 @@ struct Game {
     Entity player;
     Viewport cam;
     Texture2D menuImage;
+    Texture2D mapImage;
     bool inMainMenu;
 
     std::vector<Entity> enemyList;
@@ -28,9 +29,13 @@ struct Game {
 
         vix::initMap(new_piskel_data, NEW_PISKEL_FRAME_WIDTH, NEW_PISKEL_FRAME_HEIGHT);
 
-        Image mImage = LoadImage("assets/maps/map1.png");
-        menuImage = LoadTextureFromImage(mImage);
-        UnloadImage(mImage);
+        Image menuData = LoadImage("assets/maps/map1.png");
+        menuImage = LoadTextureFromImage(menuData);
+        UnloadImage(menuData);
+
+        Image mapData = LoadImage("assets/maps/FULLmap4.png");
+        mapImage = LoadTextureFromImage(mapData);
+        UnloadImage(mapData);
 
         inMainMenu = true;
     }
@@ -71,6 +76,15 @@ struct Game {
         ClearBackground(BLACK);
         BeginMode2D(cam.camera);
 
+        Rectangle sourceRec = { 0.0f, 0.0f, (float) mapImage.width, (float) mapImage.height };
+
+        Rectangle destRec = { 0, 0, (float) mapImage.width, (float) mapImage.height };
+
+        // draw backgroudd img scaled to the screen size
+        DrawTexturePro(mapImage, sourceRec, destRec, (Vector2){ 0, 0 }, 0.0f, WHITE);
+
+        
+
         for (int iY = 0; iY < NEW_PISKEL_FRAME_HEIGHT; iY++) {
             for (int iX = 0; iX < NEW_PISKEL_FRAME_WIDTH; iX++) {
                 if (map_data[iY * NEW_PISKEL_FRAME_WIDTH + iX]) {
@@ -91,12 +105,11 @@ struct Game {
 
         EndMode2D();
 
-        //DrawText(TextFormat("elapsed: %.2f\n active: %d\n ready: %d\n player vel: { %.2f, %.2f }", player.attack.elapsed, player.attack.active, player.attack.ready, player.velocity.x, player.velocity.y), 10, 40, 10, WHITE);
-        
         DrawFPS(10, 10);
     }
 
     void unload() {
         UnloadTexture(menuImage);
+        UnloadTexture(mapImage);
     }
 };

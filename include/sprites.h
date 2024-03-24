@@ -11,6 +11,8 @@ struct PlayerSprites {
 
     Texture2D walk[4];
 
+    Texture2D attack[4];
+
     void init() {
         for (int i = 0; i < 4; i++) {
             Image img = LoadImage(TextFormat("assets/gramps/idle%d.png", i + 1));
@@ -21,6 +23,12 @@ struct PlayerSprites {
         for (int i = 0; i < 4; i++) {
             Image img = LoadImage(TextFormat("assets/gramps/walk%d.png", i + 1));
             walk[i] = LoadTextureFromImage(img);
+            UnloadImage(img);
+        }
+
+        for (int i = 0; i < 4; i++) {
+            Image img = LoadImage(TextFormat("assets/gramps/attack%d.png", i + 1));
+            attack[i] = LoadTextureFromImage(img);
             UnloadImage(img);
         }
     }
@@ -134,31 +142,26 @@ struct WizardSprites {
 
     Texture2D walk;
 
-    Texture2D attack[2];
+    Texture2D attack;
 
     void init() {
-        Image img = LoadImage(TextFormat("assets/wizards/idle.png"));
+        Image img = LoadImage(TextFormat("assets/wizard/idle.png"));
         idle = LoadTextureFromImage(img);
         UnloadImage(img);
 
-        Image img2 = LoadImage(TextFormat("assets/wizards/walk.png"));
+        Image img2 = LoadImage(TextFormat("assets/wizard/walk.png"));
         walk = LoadTextureFromImage(img2);
         UnloadImage(img2);
 
-        for (int i = 0; i < 2; i++) {
-            Image img = LoadImage(TextFormat("assets/wizards/attack%d.png", i + 1));
-            attack[i] = LoadTextureFromImage(img);
-            UnloadImage(img);
-        }
+        Image img3 = LoadImage(TextFormat("assets/wizard/attack.png"));
+        walk = LoadTextureFromImage(img3);
+        UnloadImage(img3);
     }
 
     void unload() {
         UnloadTexture(idle);
         UnloadTexture(walk);
-
-        for (int i = 0; i < 2; i++) {
-            UnloadTexture(attack[i]);
-        }
+        UnloadTexture(attack);
     }
 
     void initEntity(Entity* en) {
@@ -181,31 +184,26 @@ struct GwizardSprites {
 
     Texture2D walk;
 
-    Texture2D attack[2];
+    Texture2D attack;
 
     void init() {
-        Image img = LoadImage(TextFormat("assets/wizards/idle.png"));
+        Image img = LoadImage(TextFormat("assets/wizard/idle.png"));
         idle = LoadTextureFromImage(img);
         UnloadImage(img);
 
-        Image img2 = LoadImage(TextFormat("assets/wizards/walk.png"));
+        Image img2 = LoadImage(TextFormat("assets/wizard/walk.png"));
         walk = LoadTextureFromImage(img2);
         UnloadImage(img2);
 
-        for (int i = 0; i < 2; i++) {
-            Image img = LoadImage(TextFormat("assets/wizards/attack%d.png", i + 1));
-            attack[i] = LoadTextureFromImage(img);
-            UnloadImage(img);
-        }
+        Image img3 = LoadImage(TextFormat("assets/wizard/attack.png"));
+        walk = LoadTextureFromImage(img3);
+        UnloadImage(img3);
     }
 
     void unload() {
         UnloadTexture(idle);
         UnloadTexture(walk);
-
-        for (int i = 0; i < 2; i++) {
-            UnloadTexture(attack[i]);
-        }
+        UnloadTexture(attack);
     }
 
     void initEntity(Entity* en) {

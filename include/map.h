@@ -131,7 +131,9 @@ struct Map {
             }
         }
 
-        enemyInfo = &(mapEnemies[mapNum - 1]);
+
+        *enemyInfo = mapEnemies[mapNum - 1];
+        std::cout << "new enemies size = " << enemyInfo->size() << std::endl;
     }
 
     float getMapZoom() {

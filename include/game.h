@@ -39,8 +39,8 @@ struct Game {
     void init() {
         map.setup();
         
-        std::vector<EnemyInfo>* enemyInfo = {};
-        map.initMap(2, enemyInfo);
+        std::vector<EnemyInfo> enemyInfo = {};
+        map.initMap(2, &enemyInfo);
 
         switchMapFlag = false;
 
@@ -50,12 +50,18 @@ struct Game {
         wizardSprites.init();
         GWizardSprites.init();
 
+        std::cout << "loaded sprites" << std::endl;
+
         Vector2 spawn = map.getSpawnPos();
         
         player.init(spawn.x, spawn.y, PLAYER);
         playerSprites.initEntity(&player);
 
+        std::cout << "inited player" << std::endl;
+
         addEntities(enemyInfo);
+
+        std::cout << "added enemies" << std::endl;
         
         cam.init(&player);
         cam.camera.zoom = map.getMapZoom();
@@ -67,8 +73,11 @@ struct Game {
         inMainMenu = true;
     }
 
-    void addEntities(std::vector<EnemyInfo>* entityInfo) {
-        for (EnemyInfo info : *entityInfo) {
+    void addEntities(std::vector<EnemyInfo> entityInfo) {
+        std::cout << "looping through enemy infos..." << std::endl;
+        for (EnemyInfo info : entityInfo) {
+            std::cout << "craeting enemy";
+            std::cout << " at xPos: " << info.spawn.x << std::endl;
             Entity enemy;
             enemy.init(info.spawn.x, info.spawn.y, info.type);
 
@@ -123,15 +132,17 @@ struct Game {
         player.update(&map, &switchMapFlag, dt);
 
         if (switchMapFlag) {
-            std::cout << "loading new map" << std::endl;
+            
 
-            std::vector<EnemyInfo>* enemyInfo = {};
-            map.switchMap(map.getNewMap(player.position), enemyInfo);
+            std::vector<EnemyInfo> enemyInfo;
+            map.switchMap(map.getNewMap(player.position), &enemyInfo);
+
             enemyList.clear();
 
             player.position = map.getSpawnPos();
             switchMapFlag = false;
 
+            std::cout << "# of enemies: " << enemyInfo.size() << std::endl;
             addEntities(enemyInfo);
         }
 

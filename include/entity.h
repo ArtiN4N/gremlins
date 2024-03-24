@@ -29,10 +29,12 @@ struct Entity {
 
     EntityType type;
 
-    void init(float x, float y, EntityType type) {
+    void init(float x, float y, EntityType ty) {
         position = {x, y};
         moveVelocity = { 0.f, 0.f };
         actionVelocity = { 0.f, 0.f };
+
+        type = ty;
 
         dir = NORTH;
 
@@ -197,6 +199,7 @@ struct Entity {
 
             if (map->mapCollisionData[iY * map->width + iX] == DOOR && type == PLAYER) {
                 *switchMapFlag = true;
+                std::cout << "raise map switch flag" << std::endl;
                 break;
             }
             

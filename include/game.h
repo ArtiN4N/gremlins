@@ -13,6 +13,7 @@
 
 struct Game {
     Entity player;
+    Entity enemy;
     Viewport cam;
     Texture2D menuImage;
     Texture2D mapImage;
@@ -23,6 +24,10 @@ struct Game {
 
     void init() {
         player.init(200, 100, 25, 350);
+
+        enemy.init(500, 100, 25, 200);
+        enemyList.push_back(enemy);
+
         playerInitAttacks(&player);
         
         cam.init(&player);
@@ -48,7 +53,7 @@ struct Game {
         for (auto iter = projectileList.begin(); iter != projectileList.end(); iter++) {
             int index = std::distance(projectileList.begin(), iter);
 
-            bool alive = projectileList[index].update(map_data, dt);
+            bool alive = projectileList[index].update(&player, map_data, dt);
             
             if (!alive) {
                 projectileList.erase(projectileList.begin() + index);
@@ -57,17 +62,22 @@ struct Game {
         }
 
         for (auto iter = enemyList.begin(); iter != enemyList.end(); iter++) {
-            int index = std::distance(projectileList.begin(), iter);
+            int index = std::distance(enemyList.begin(), iter);
 
-            bool alive = enemyList[index].update(map_data, dt);
-            
-            if (!alive) {
-                enemyList.erase(enemyList.begin() + index);
-                iter--;
+            if (index >= 0 && index < enemyList.size()) {
+                bool alive = enemyList[index].update(&player, map_data, dt);
+
+                if (!alive) {
+                    enemyList.erase(enemyList.begin() + index);
+                    iter--;
+                }
+            } else {
+                // Print an error message if the index is out of bounds
+                std::cout << "Error: Invalid index " << index << " for enemyList." << std::endl;
             }
         }
 
-        player.update(map_data, dt);
+        player.update(&player, map_data, dt);
 
         cam.update();
     }
@@ -83,7 +93,6 @@ struct Game {
         // draw backgroudd img scaled to the screen size
         DrawTexturePro(mapImage, sourceRec, destRec, (Vector2){ 0, 0 }, 0.0f, WHITE);
 
-        
 
         for (int iY = 0; iY < NEW_PISKEL_FRAME_HEIGHT; iY++) {
             for (int iX = 0; iX < NEW_PISKEL_FRAME_WIDTH; iX++) {

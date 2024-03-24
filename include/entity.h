@@ -2,6 +2,7 @@
 
 #include "defs.h"
 #include "raylib.h"
+#include "raymath.h"
 
 #include <cmath>
 #include <iostream>
@@ -119,7 +120,7 @@ struct Entity {
         else return tileCollisionSouth(prevPos, iX, iY, foundY, collide);
     }
 
-    bool update(bool map_data[1024], float dt) {
+    bool update(Entity* player, bool map_data[1024], float dt) {
         bool ret = attack.update(dir, radius, dt);
 
         Vector2 prevPos = { position.x, position.y };
@@ -141,6 +142,10 @@ struct Entity {
         if (dashTrace > 0.f && dashTrace < 50.f) dashTrace = 0.f;
         if (dashTrace < 0.f && dashTrace > -50.f) dashTrace = 0.f;
         
+        // Move the enemy towards the player's position.
+    float maxDistance = speed * dt;  // Adjust the speed as needed.
+    position = Vector2MoveTowards(position, player->position, maxDistance);
+
         // MAP COLLISION
         Vector2 tileGridTL = {(float) ((int) (position.x - radius) / TILE_SIZE), (float) ((int) (position.y - radius) / TILE_SIZE)};
         Vector2 tileGridTR = {(float) ((int) (position.x + radius) / TILE_SIZE), (float) ((int) (position.y - radius) / TILE_SIZE)};
@@ -174,11 +179,26 @@ struct Entity {
                 if (tileCollisionX(&prevPos, iX, iY, &foundX, collide)) continue;
             }
             
-            
         }
 
         return ret;
     }
+
+    Vector2 Vector2Subtract(Vector2 v1, Vector2 v2) {
+    Vector2 result;
+    result.x = v1.x - v2.x;
+    result.y = v1.y - v2.y;
+    return result;
+}
+
+    Vector2 Vector2Normalize(Vector2 v) {
+    float length = sqrt((v.x * v.x) + (v.y * v.y));
+    Vector2 result;
+    result.x = v.x / length;
+    result.y = v.y / length;
+    return result;
+}
+
 
     void draw() {
         DrawCircleV(position, radius, RED);

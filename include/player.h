@@ -75,4 +75,10 @@ void playerInputHandle(Entity* player, std::vector<Entity>* projectileList, floa
 
         projectileList->push_back(arrow);
     }
+
+    if (IsKeyPressed(KEY_A) && player->hp < player->maxHP && player-> heals > 0) {
+        player->heals--;
+        player->hp += 50.f;
+        if (player->hp > player->maxHP) player->hp = player->maxHP;
+    }
 }

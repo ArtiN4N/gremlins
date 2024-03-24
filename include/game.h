@@ -273,7 +273,7 @@ struct Game {
         DrawFPS(10, 10);
 
         DrawRectangle(0, 0, 300, 200, {255, 255, 255, 120});
-        DrawText(TextFormat("HP = $%.0f", player.hp), 10, 40, 40, YELLOW);
+        DrawText(TextFormat("HP = %.0f", player.hp), 10, 40, 40, RED);
         DrawText(TextFormat("GOLD = $%d", player.gold), 10, 75, 40, YELLOW);
         DrawText(TextFormat("HEALS = %d", player.heals), 10, 110, 40, RED);
     }

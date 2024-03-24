@@ -17,6 +17,7 @@ struct Entity {
     Vector2 actionVelocity;
 
     float hp;
+    float maxHP;
 
     float damage;
 
@@ -58,6 +59,7 @@ struct Entity {
                 radius = 25.f;
                 speed = 350;
                 hp = 100.f;
+                maxHP = hp;
                 damage = 25.f;
                 attack.init(70, 50, .3f, .05f, false);
                 break;
@@ -66,6 +68,7 @@ struct Entity {
                 radius = 35.f;
                 speed = 250;
                 hp = 50.f;
+                maxHP = hp;
                 damage = 0.f;
                 break;
             case GHOST:
@@ -73,6 +76,7 @@ struct Entity {
                 radius = 20.f;
                 speed = 550;
                 hp = 20.f;
+                maxHP = hp;
                 damage = 15.f;
                 break;
             case WIZARD:
@@ -80,6 +84,7 @@ struct Entity {
                 radius = 40.f;
                 speed = 450;
                 hp = 100.f;
+                maxHP = hp;
                 damage = 25.f;
                 break;
             case GRANDW:
@@ -87,12 +92,14 @@ struct Entity {
                 radius = 80.f;
                 speed = 600;
                 hp = 1000.f;
+                maxHP = hp;
                 damage = 25.f;
                 break;
             case PROJECTILE:
                 radius = 5.f;
                 speed = 1000;
                 hp = 1.f;
+                maxHP = hp;
                 damage = 10.f;
                 attack.init(10, 100, 1.f, .0f, true);
         }

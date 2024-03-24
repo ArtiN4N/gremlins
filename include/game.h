@@ -19,13 +19,14 @@ struct Game {
 
     Viewport cam;
     Texture2D menuImage;
-    Texture2D mapImage;
+    
     bool inMainMenu;
 
     std::vector<Entity> enemyList;
     std::vector<Entity> projectileList;
 
     void init() {
+        map.setup();
         map.initMap(2);
 
         playerSprites.init();
@@ -40,10 +41,6 @@ struct Game {
         Image menuData = LoadImage("assets/maps/map1.png");
         menuImage = LoadTextureFromImage(menuData);
         UnloadImage(menuData);
-
-        Image mapData = LoadImage("assets/maps/FULLmap2.png");
-        mapImage = LoadTextureFromImage(mapData);
-        UnloadImage(mapData);
 
         inMainMenu = true;
     }
@@ -84,12 +81,12 @@ struct Game {
         ClearBackground(BLACK);
         BeginMode2D(cam.camera);
 
-        Rectangle sourceRec = { 0.0f, 0.0f, (float) mapImage.width, (float) mapImage.height };
+        Rectangle sourceRec = { 0.0f, 0.0f, (float) map.getMapImage().width, (float) map.getMapImage().height };
 
-        Rectangle destRec = { 0, 0, (float) mapImage.width, (float) mapImage.height };
+        Rectangle destRec = { 0, 0, (float) map.getMapImage().width, (float) map.getMapImage().height };
 
         // draw backgroudd img scaled to the screen size
-        DrawTexturePro(mapImage, sourceRec, destRec, (Vector2){ 0, 0 }, 0.0f, WHITE);
+        DrawTexturePro(map.getMapImage(), sourceRec, destRec, (Vector2){ 0, 0 }, 0.0f, WHITE);
 
         for (int iY = 0; iY < map.height; iY++) {
             for (int iX = 0; iX < map.width; iX++) {
@@ -118,8 +115,8 @@ struct Game {
 
     void unload() {
         UnloadTexture(menuImage);
-        UnloadTexture(mapImage);
         playerSprites.unload();
         map.unloadMap();
+        map.teardown();
     }
 };

@@ -4,15 +4,16 @@
 
 #include <cstdlib>
 
+#include "FULLmap1.h"
 #include "FULLmap2.h"
 #include "FULLmap4.h"
 
 enum CollisionType { WALL = 0, DOOR, NONE };
 
 unsigned int mapSizes[10][2] = {
-    {0, 0},
+    {128, 1216},
     {64, 64},
-    {0, 0},
+    {48, 64},
     {64, 43},
     {0, 0},
     {0, 0},
@@ -23,9 +24,9 @@ unsigned int mapSizes[10][2] = {
 };
 
 Vector2 mapSpawns[10] = {
-    {0, 0},
+    {128, 1920},
     {1920, 128},
-    {0, 0},
+    {600, 600},
     {300, 300},
     {0, 0},
     {0, 0},
@@ -45,6 +46,33 @@ struct Map {
 
     CollisionType* mapCollisionData;
 
+    Texture2D mapTextures[4];
+
+    void setup() {
+        Image map1Data = LoadImage("assets/maps/map1.png");
+        Texture2D map1Image = LoadTextureFromImage(map1Data);
+        UnloadImage(map1Data);
+
+        Image map2Data = LoadImage("assets/maps/map2.png");
+        Texture2D map2Image = LoadTextureFromImage(map2Data);
+        UnloadImage(map2Data);
+
+        Image map3Data = LoadImage("assets/maps/map3.png");
+        Texture2D map3Image = LoadTextureFromImage(map3Data);
+        UnloadImage(map3Data);
+
+        Image map4Data = LoadImage("assets/maps/map4.png");
+        Texture2D map4Image = LoadTextureFromImage(map4Data);
+        UnloadImage(map4Data);
+
+        
+        mapTextures[0] = map1Image;
+        mapTextures[1] = map2Image;
+        mapTextures[2] = map3Image;
+        mapTextures[3] = map4Image;
+        
+    }
+
     void initMap(int map) {
         mapNum = map;
 
@@ -58,6 +86,10 @@ struct Map {
         std::cout << "loading image data" << std::endl;
         unsigned int* image_data;
         switch (map) {
+            case 1:
+                image_data = fullmap1_data;
+                tileSize = 64;
+                break;
             case 2:
                 image_data = fullmap2_data;
                 tileSize = 64;
@@ -75,7 +107,6 @@ struct Map {
 
         for (unsigned int y = 0; y < mapSizes[map - 1][1]; y++) {
             for (unsigned int x = 0; x < mapSizes[map - 1][0]; x++) {
-                std::cout << "writing collision at x = " << x << " and y = " << y << " res = " << y * width + x << " cuz width = " << width << std::endl;
                 //Get pixel color
                 uint32_t pixel = image_data[y * width + x];
 
@@ -103,11 +134,21 @@ struct Map {
         free(mapCollisionData);
     }
 
+    Texture2D getMapImage() {
+        return mapTextures[mapNum - 1];
+    }
+
     int getNewMap(Vector2 position) {
         switch (mapNum) {
+            case 1:
+                if (position.x < 128) return 2;
+                else return 5;
             case 2:
                 if (position.y < 128) return 3;
                 else return 1;
+            case 3:
+                if (position.y < 640 * 3) return 4;
+                else return 2;
             case 4:
                 return 3;
             default:
@@ -116,7 +157,15 @@ struct Map {
     }
 
     void switchMap(int map) {
+        std::cout << "switching map" << std::endl;
         unloadMap();
+        std::cout << "unloaded assets" << std::endl;
         initMap(map);
+    }
+
+    void teardown() {
+        for (int i = 0; i < 4; i++) {
+            UnloadTexture(mapTextures[i]);
+        }
     }
 };

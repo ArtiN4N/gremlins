@@ -73,7 +73,7 @@ struct Entity {
             //prevPos->y = position.y;
             actionVelocity.x *= -.5f;
             *foundX = true;
-            std::cout << "east collision with pos: " << iX << ":" << iY << std::endl;
+
             return true;
         }
         return false;
@@ -85,7 +85,6 @@ struct Entity {
             //prevPos->y = position.y;
             actionVelocity.x *= -.5f;
             *foundX = true;
-            std::cout << "west collision with pos: " << iX << ":" << iY << std::endl;
             return true;
         }
         return false;
@@ -102,7 +101,6 @@ struct Entity {
             //prevPos->x = position.x;
             actionVelocity.y *= -.5f;
             *foundY = true;
-            std::cout << "south collision with pos: " << iX << ":" << iY << std::endl;
             return true;
         }
         return false;
@@ -114,7 +112,6 @@ struct Entity {
             //prevPos->x = position.x;
             actionVelocity.y *= -.5f;
             *foundY = true;
-            std::cout << "north collision with pos: " << iX << ":" << iY << std::endl;
             return true;
         }
         return false;

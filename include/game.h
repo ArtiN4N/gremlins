@@ -15,6 +15,8 @@
 
 #include <vector>
 
+#include "item_driver.h"
+
 struct Game {
     Entity player;
 
@@ -37,6 +39,9 @@ struct Game {
 
     std::vector<Entity> enemyList;
     std::vector<Entity> projectileList;
+
+    //item system
+    std::vector<uint32_t> inventory;
 
     void init() {
         flagRestart = false;
@@ -75,6 +80,41 @@ struct Game {
         UnloadImage(menuData);
 
         inMainMenu = true;
+
+        //item system
+        vix::items_list.push_back(vix::item_driver{ {spawn.x-100, spawn.y-100}, 30 , vix::item_type::COIN});
+        vix::items_list.push_back(vix::item_driver{ {spawn.x-200, spawn.y-200}, 20, vix::item_type::COIN });
+        vix::items_list.push_back(vix::item_driver{ {spawn.x-300, spawn.y-300}, 25, vix::item_type::COIN });
+    }
+
+    void addEntities(std::vector<EnemyInfo> entityInfo) {
+        std::cout << "looping through enemy infos..." << std::endl;
+        for (EnemyInfo info : entityInfo) {
+            std::cout << "craeting enemy";
+            std::cout << " at xPos: " << info.spawn.x << std::endl;
+            Entity enemy;
+            enemy.init(info.spawn.x, info.spawn.y, info.type);
+
+            switch (info.type) {
+                case HUMAN:
+                    humanSprites.initEntity(&enemy);
+                    break;
+                case GHOST:
+                    ghostSprites.initEntity(&enemy);
+                    break;
+                case WIZARD:
+                    wizardSprites.initEntity(&enemy);
+                    break;
+                case GRANDW:
+                    GWizardSprites.initEntity(&enemy);
+                    break;
+                default:
+                    break;
+            }
+
+            enemyList.push_back(enemy);
+        }
+        std::cout << "done enemies" << std::endl;
     }
 
     void addEntities(std::vector<EnemyInfo> entityInfo) {
@@ -211,25 +251,25 @@ struct Game {
         }
 
         for (Entity e : enemyList) {
-            switch (e.type) {
-                case HUMAN:
-                    humanSprites.draw(e);
-                    break;
-                case GHOST:
-                    ghostSprites.draw(e);
-                    break;
-                case WIZARD:
-                    wizardSprites.draw(e);
-                    break;
-                case GRANDW:
-                    GWizardSprites.draw(e);
-                    break;
-                default:
-                    break;
+            e.draw();
+        }
+
+
+        //item system
+        size_t items_list_length = vix::items_list.size();
+
+        for (size_t i = 0; i<items_list_length; i++) {
+            vix::items_list[i].draw();
+            if (vix::items_list[i].check_collision(player.position, player.radius)) {
+                 inventory.push_back(vix::items_list[i].item_type);
+                 vix::items_list.erase(vix::items_list.begin()+i);
+                 items_list_length--;
+
+                 std::cout<<"Hit"<<std::endl;
             }
         }
 
-        playerSprites.draw(player);
+        player.draw();
 
         EndMode2D();
 

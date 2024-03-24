@@ -7,7 +7,7 @@
 void MainMenu(Game& game) {
     BeginDrawing();
     ClearBackground(BLACK);
-
+    std::cout << "drawing menu" << std::endl;
     Rectangle sourceRec = { 0.0f, 0.0f, (float)game.menuImage.width, (float)game.menuImage.height };
 
     Rectangle destRec = { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() };
@@ -16,7 +16,7 @@ void MainMenu(Game& game) {
     DrawTexturePro(game.menuImage, sourceRec, destRec, (Vector2){ 0, 0 }, 0.0f, WHITE);
 
     DrawText("Gremlin Massacre 2: A Gremlin's Revenge", GetScreenWidth() / 2 - MeasureText("Gremlin Massacre 2: A Gremlin's Revenge", 40) / 2, GetScreenHeight() / 4 - 40, 40, WHITE);
-
+    std::cout << "test1" << std::endl;
     // Draw the play button
     DrawRectangle(GetScreenWidth() / 2 - 100, GetScreenHeight() / 2 - 50, 200, 50, BLUE);
     DrawText("Play", GetScreenWidth() / 2 - MeasureText("Play", 30) / 2, GetScreenHeight() / 2 - 40, 30, WHITE);
@@ -36,7 +36,7 @@ void MainMenu(Game& game) {
     DrawText("Saarang A.", GetScreenWidth() / 2 - MeasureText("Saarang A.", 20) / 2, GetScreenHeight() / 2 + 300, 20, WHITE);
 
     Vector2 mousePos = GetMousePosition();
-
+    std::cout << "test2" << std::endl;
     if (CheckCollisionPointRec(mousePos, play_button) || CheckCollisionPointRec(mousePos, settings_button)){
         SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
         }
@@ -46,6 +46,7 @@ void MainMenu(Game& game) {
     if (CheckCollisionPointRec(GetMousePosition(), play_button) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         game.inMainMenu = false;
     }
-
+    std::cout << "test3" << std::endl;
     EndDrawing();
+    std::cout << "test4" << std::endl;
 }

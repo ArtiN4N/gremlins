@@ -7,13 +7,16 @@
 #include <player.h>
 
 #include "col.hpp"
-#include "Map.hpp"
+#include "FULLmap4.h"
 
 #include <vector>
 
 struct Game {
     Entity player;
-    Entity enemy;
+    PlayerSprites playerSprites;
+
+    Map map;
+
     Viewport cam;
     Texture2D menuImage;
     Texture2D mapImage;
@@ -23,16 +26,20 @@ struct Game {
     std::vector<Entity> projectileList;
 
     void init() {
-        player.init(200, 100, 25, 350);
+        playerSprites.init();
 
+        Entity enemy;
         enemy.init(500, 100, 25, 200);
         enemyList.push_back(enemy);
-
-        playerInitAttacks(&player);
+        
+        player.init(300, 300, 25, 350);
+        playerInit(&player, &playerSprites);
         
         cam.init(&player);
 
-        vix::initMap(new_piskel_data, NEW_PISKEL_FRAME_WIDTH, NEW_PISKEL_FRAME_HEIGHT);
+        std::cout << "loading map" << std::endl;
+        map.initMap(4);
+        std::cout << "loaded map" << std::endl;
 
         Image menuData = LoadImage("assets/maps/map1.png");
         menuImage = LoadTextureFromImage(menuData);
@@ -53,7 +60,7 @@ struct Game {
         for (auto iter = projectileList.begin(); iter != projectileList.end(); iter++) {
             int index = std::distance(projectileList.begin(), iter);
 
-            bool alive = projectileList[index].update(&player, map_data, dt);
+            bool alive = projectileList[index].update(&player, map, dt);
             
             if (!alive) {
                 projectileList.erase(projectileList.begin() + index);
@@ -63,21 +70,19 @@ struct Game {
 
         for (auto iter = enemyList.begin(); iter != enemyList.end(); iter++) {
             int index = std::distance(enemyList.begin(), iter);
+            if (!index >= 0 || !index < enemyList.size()) break;
 
-            if (index >= 0 && index < enemyList.size()) {
-                bool alive = enemyList[index].update(&player, map_data, dt);
+            
+            bool alive = enemyList[index].update(&player, map, dt);
 
-                if (!alive) {
-                    enemyList.erase(enemyList.begin() + index);
-                    iter--;
-                }
-            } else {
-                // Print an error message if the index is out of bounds
-                std::cout << "Error: Invalid index " << index << " for enemyList." << std::endl;
+            if (!alive) {
+                enemyList.erase(enemyList.begin() + index);
+                iter--;
             }
+
         }
 
-        player.update(&player, map_data, dt);
+        player.update(&player, map, dt);
 
         cam.update();
     }
@@ -93,11 +98,10 @@ struct Game {
         // draw backgroudd img scaled to the screen size
         DrawTexturePro(mapImage, sourceRec, destRec, (Vector2){ 0, 0 }, 0.0f, WHITE);
 
-
-        for (int iY = 0; iY < NEW_PISKEL_FRAME_HEIGHT; iY++) {
-            for (int iX = 0; iX < NEW_PISKEL_FRAME_WIDTH; iX++) {
-                if (map_data[iY * NEW_PISKEL_FRAME_WIDTH + iX]) {
-                    DrawRectangle(iX * TILE_SIZE, iY * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+        for (int iY = 0; iY < map.height; iY++) {
+            for (int iX = 0; iX < map.width; iX++) {
+                if (map.mapCollisionData[iY * map.width + iX]) {
+                    DrawRectangle(iX * map.tileSize, iY * map.tileSize, map.tileSize, map.tileSize, RED);
                 }   
             }
         }
@@ -120,5 +124,7 @@ struct Game {
     void unload() {
         UnloadTexture(menuImage);
         UnloadTexture(mapImage);
+        playerSprites.unload();
+        map.unloadMap();
     }
 };

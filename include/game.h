@@ -5,6 +5,7 @@
 #include <entity.h>
 #include <camera.h>
 #include <player.h>
+#include <enemy.h>
 
 #include "col.hpp"
 #include "FULLmap4.h"
@@ -13,24 +14,34 @@
 
 struct Game {
     Entity player;
+
     PlayerSprites playerSprites;
+    EnemySprites enemySprites;
 
     Map map;
 
     Viewport cam;
     Texture2D menuImage;
-    Texture2D mapImage;
+    
     bool inMainMenu;
 
     std::vector<Entity> enemyList;
     std::vector<Entity> projectileList;
 
     void init() {
+        map.setup();
         map.initMap(2);
 
         playerSprites.init();
-        
+        enemySprites.init();
+
         Vector2 spawn = map.getSpawnPos();
+
+        Entity enemy;
+        enemy.init(spawn.x, spawn.y, 30, 400);
+        enemyInit(&enemy, &enemySprites);
+        enemyList.push_back(enemy);
+        
         player.init(spawn.x, spawn.y, 25, 350);
         playerInit(&player, &playerSprites);
         
@@ -41,10 +52,6 @@ struct Game {
         menuImage = LoadTextureFromImage(menuData);
         UnloadImage(menuData);
 
-        Image mapData = LoadImage("assets/maps/FULLmap2.png");
-        mapImage = LoadTextureFromImage(mapData);
-        UnloadImage(mapData);
-
         inMainMenu = true;
     }
 
@@ -53,10 +60,11 @@ struct Game {
     }
 
     void update(float dt) {
+
         for (auto iter = projectileList.begin(); iter != projectileList.end(); iter++) {
             int index = std::distance(projectileList.begin(), iter);
 
-            bool alive = projectileList[index].update(map, dt);
+            bool alive = projectileList[index].update(&map, dt);
             
             if (!alive) {
                 projectileList.erase(projectileList.begin() + index);
@@ -64,18 +72,12 @@ struct Game {
             }
         }
 
-        for (auto iter = enemyList.begin(); iter != enemyList.end(); iter++) {
-            int index = std::distance(projectileList.begin(), iter);
-
-            bool alive = enemyList[index].update(map, dt);
-            
-            if (!alive) {
-                enemyList.erase(enemyList.begin() + index);
-                iter--;
-            }
+        for (Entity& enemy : enemyList) {
+            enemy.update(&map, dt);
+            basicAI(&enemy, &player, dt);
         }
 
-        player.update(map, dt);
+        player.update(&map, dt);
 
         cam.update();
     }
@@ -84,12 +86,20 @@ struct Game {
         ClearBackground(BLACK);
         BeginMode2D(cam.camera);
 
-        Rectangle sourceRec = { 0.0f, 0.0f, (float) mapImage.width, (float) mapImage.height };
 
-        Rectangle destRec = { 0, 0, (float) mapImage.width, (float) mapImage.height };
+        //Texture2D mapTex = map.mapTextures[3];
+
+        
+        Texture2D mapTex = *(map.currentMapTex);
+
+        Rectangle sourceRec = { 0.0f, 0.0f, (float) mapTex.width, (float) mapTex.height };
+
+        Rectangle destRec = { 0, 0, (float) mapTex.width, (float) mapTex.height };
 
         // draw backgroudd img scaled to the screen size
-        DrawTexturePro(mapImage, sourceRec, destRec, (Vector2){ 0, 0 }, 0.0f, WHITE);
+        DrawTexturePro(mapTex, sourceRec, destRec, (Vector2){ 0, 0 }, 0.0f, WHITE);
+
+        
 
         for (int iY = 0; iY < map.height; iY++) {
             for (int iX = 0; iX < map.width; iX++) {
@@ -101,6 +111,8 @@ struct Game {
             }
         }
 
+        
+
         for (Entity e : projectileList) {
             e.draw();
         }
@@ -108,6 +120,7 @@ struct Game {
         for (Entity e : enemyList) {
             e.draw();
         }
+
 
         player.draw();
 
@@ -118,8 +131,11 @@ struct Game {
 
     void unload() {
         UnloadTexture(menuImage);
-        UnloadTexture(mapImage);
+
         playerSprites.unload();
+        enemySprites.unload();
+
         map.unloadMap();
+        map.teardown();
     }
 };

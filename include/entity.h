@@ -2,6 +2,7 @@
 
 #include "defs.h"
 #include "raylib.h"
+#include "raymath.h"
 
 #include <cmath>
 #include <iostream>
@@ -44,6 +45,8 @@ struct Entity {
         dir = NORTH;
 
         player = false;
+
+        tex = NULL;
     }
 
     void initProj(Direction direction) {
@@ -73,7 +76,7 @@ struct Entity {
             //prevPos->y = position.y;
             actionVelocity.x *= -.5f;
             *foundX = true;
-            std::cout << "east collision with pos: " << iX << ":" << iY << std::endl;
+
             return true;
         }
         return false;
@@ -85,7 +88,6 @@ struct Entity {
             //prevPos->y = position.y;
             actionVelocity.x *= -.5f;
             *foundX = true;
-            std::cout << "west collision with pos: " << iX << ":" << iY << std::endl;
             return true;
         }
         return false;
@@ -102,7 +104,6 @@ struct Entity {
             //prevPos->x = position.x;
             actionVelocity.y *= -.5f;
             *foundY = true;
-            std::cout << "south collision with pos: " << iX << ":" << iY << std::endl;
             return true;
         }
         return false;
@@ -114,7 +115,6 @@ struct Entity {
             //prevPos->x = position.x;
             actionVelocity.y *= -.5f;
             *foundY = true;
-            std::cout << "north collision with pos: " << iX << ":" << iY << std::endl;
             return true;
         }
         return false;
@@ -125,13 +125,17 @@ struct Entity {
         else return tileCollisionSouth(prevPos, iX, iY, foundY, collide);
     }
 
-    bool update(Map map, float dt) {
+    bool update(Map* map, float dt) {
         bool ret = attack.update(dir, radius, dt);
 
         Vector2 prevPos = { position.x, position.y };
 
         position.x += (actionVelocity.x + moveVelocity.x) * dt;
         position.y += (actionVelocity.y + moveVelocity.y) * dt;
+
+        // Debug logging
+        // std::cout << "Player previous position: (" << prevPos.x << ", " << prevPos.y << ")\n";
+        // std::cout << "PLayer updated postion: (" << position.x << ", " << position.y << ")\n";
 
         float f = .0005f;
         actionVelocity.x *= pow(f, dt);
@@ -146,12 +150,12 @@ struct Entity {
 
         if (dashTrace > 0.f && dashTrace < 50.f) dashTrace = 0.f;
         if (dashTrace < 0.f && dashTrace > -50.f) dashTrace = 0.f;
-        
+
         // MAP COLLISION
-        Vector2 tileGridTL = {(float) ((int) (position.x - radius) / map.tileSize), (float) ((int) (position.y - radius) / map.tileSize)};
-        Vector2 tileGridTR = {(float) ((int) (position.x + radius) / map.tileSize), (float) ((int) (position.y - radius) / map.tileSize)};
-        Vector2 tileGridBL = {(float) ((int) (position.x - radius) / map.tileSize), (float) ((int) (position.y + radius) / map.tileSize)};
-        Vector2 tileGridBR = {(float) ((int) (position.x + radius) / map.tileSize), (float) ((int) (position.y + radius) / map.tileSize)};
+        Vector2 tileGridTL = {(float) ((int) (position.x - radius) / map->tileSize), (float) ((int) (position.y - radius) / map->tileSize)};
+        Vector2 tileGridTR = {(float) ((int) (position.x + radius) / map->tileSize), (float) ((int) (position.y - radius) / map->tileSize)};
+        Vector2 tileGridBL = {(float) ((int) (position.x - radius) / map->tileSize), (float) ((int) (position.y + radius) / map->tileSize)};
+        Vector2 tileGridBR = {(float) ((int) (position.x + radius) / map->tileSize), (float) ((int) (position.y + radius) / map->tileSize)};
 
         Vector2 tilesToCheck[] = { tileGridTL, tileGridTR, tileGridBL, tileGridBR };
 
@@ -163,19 +167,21 @@ struct Entity {
             int iX = (int) tilesToCheck[i].x;
             int iY = (int) tilesToCheck[i].y;
 
-            if (iX < 0 || iY < 0) continue;
+            if (iX < 0 || iY < 0 || iX >= map->width || iY >= map->height) continue;
 
-            if (map.mapCollisionData[iY * map.width + iX] == NONE) continue;
+            if (map->mapCollisionData[iY * map->width + iX] == NONE) continue;
             
-            Rectangle rec = {(float) (iX * map.tileSize), (float) (iY * map.tileSize), map.tileSize, map.tileSize};
+            Rectangle rec = {(float) (iX * map->tileSize), (float) (iY * map->tileSize), (float) map->tileSize, (float) map->tileSize};
 
             bool collide = vix::check_collision_circle_rec_this(position, radius, rec);
 
             if (!collide) continue;
 
-            if (map.mapCollisionData[iY * map.width + iX] == DOOR && player) {
-                map.switchMap(map.getNewMap(position));
-                continue;
+            if (map->mapCollisionData[iY * map->width + iX] == DOOR && player) {
+                std::cout << "loading new map" << std::endl;
+                map->switchMap(map->getNewMap(position));
+                position = map->getSpawnPos();
+                break;
             }
             
             if (dir == EAST || dir == WEST) {
@@ -192,6 +198,7 @@ struct Entity {
         return ret;
     }
 
+
     void draw() {
         Texture2D drawing = *tex;
         Rectangle sourceRec = { 0.0f, 0.0f, (float) drawing.width, (float) drawing.height };
@@ -199,10 +206,8 @@ struct Entity {
         Rectangle destRec = { position.x, position.y - 10, radius * 3, radius * 3 };
         DrawCircleV(position, radius, RED);
         // draw backgroudd img scaled to the screen size
-        DrawTexturePro(drawing, sourceRec, destRec, { radius * 3/2, radius * 3/2 }, 0.f, WHITE);
-
         
-
+        DrawTexturePro(drawing, sourceRec, destRec, { radius * 3/2, radius * 3/2 }, 0.f, WHITE);
 
         attack.debugDraw(position);
     }

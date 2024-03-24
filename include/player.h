@@ -38,7 +38,8 @@ struct PlayerSprites {
 
 void playerInit(Entity* player, PlayerSprites* sprites) {
     player->attack.init(70, 50, .3f, .05f, false);
-    player->tex = &(sprites->idle[0]);
+    player->tex = &(sprites->idle[1]);
+    player->player = true;
 }
 
 

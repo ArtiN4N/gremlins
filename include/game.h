@@ -11,6 +11,8 @@
 
 #include <vector>
 
+#include "item_driver.h"
+
 struct Game {
     Entity player;
     PlayerSprites playerSprites;
@@ -44,6 +46,11 @@ struct Game {
         UnloadImage(menuData);
 
         inMainMenu = true;
+
+        //test item system
+        items_list.push_back(item_driver{ {100, 100}, 30 });
+        items_list.push_back(item_driver{ {200, 200}, 20 });
+        items_list.push_back(item_driver{ {300, 300}, 25 });
     }
 
     void input(float dt) {
@@ -111,6 +118,15 @@ struct Game {
 
         for (Entity e : enemyList) {
             e.draw();
+        }
+
+        size_t items_list_length = items_list.size();
+
+        for (size_t i = 0; i<items_list_length; i++) {
+            items_list[i].draw();
+            if (items_list[i].check_collision(player.position, player.radius)) {
+                 std::cout<<"Hit"<<std::endl;
+            }
         }
 
         player.draw();

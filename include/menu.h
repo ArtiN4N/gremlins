@@ -28,7 +28,7 @@ void MainMenu(Game& game) {
     // Credits:
     DrawText("Created by: ", GetScreenWidth() / 2 - MeasureText("Created by: ", 20) / 2, GetScreenHeight() / 2 + 200, 20, WHITE);
     DrawText("Arshia T.", GetScreenWidth() / 2 - MeasureText("Arshia T.", 20) / 2, GetScreenHeight() / 2 + 220, 20, WHITE);
-    DrawText("Cohen T.H.", GetScreenWidth() / 2 - MeasureText("Cohen T.H.", 20) / 2, GetScreenHeight() / 2 + 240, 20, WHITE);
+    DrawText("Cohen t.H.", GetScreenWidth() / 2 - MeasureText("Cohen t.H.", 20) / 2, GetScreenHeight() / 2 + 240, 20, WHITE);
     DrawText("Daffodil H.", GetScreenWidth() / 2 - MeasureText("Daffodil H.", 20) / 2, GetScreenHeight() / 2 + 260, 20, WHITE);
     DrawText("Julian M.", GetScreenWidth() / 2 - MeasureText("Julian M.", 20) / 2, GetScreenHeight() / 2 + 280, 20, WHITE);
     DrawText("Saarang A.", GetScreenWidth() / 2 - MeasureText("Saarang A.", 20) / 2, GetScreenHeight() / 2 + 300, 20, WHITE);

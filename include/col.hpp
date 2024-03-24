@@ -16,7 +16,8 @@ namespace vix {
 
     enum policy {
         COLLIDE,
-        DETECT
+        DETECT,
+        ITEM
     };
 
     struct game_object {

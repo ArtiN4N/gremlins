@@ -5,6 +5,7 @@
 #include <entity.h>
 #include <camera.h>
 #include <player.h>
+#include <enemy.h>
 
 #include "col.hpp"
 #include "FULLmap4.h"
@@ -13,9 +14,9 @@
 
 struct Game {
     Entity player;
-    Entity enemy;
 
     PlayerSprites playerSprites;
+    EnemySprites enemySprites;
 
     Map map;
 
@@ -28,25 +29,19 @@ struct Game {
     std::vector<Entity> projectileList;
 
     void init() {
-        map.initMap(1);
-
-        player.type = PLAYER;
-        enemy.type = ENEMY;
+        map.initMap(1);        
 
         playerSprites.init();
+        enemySprites.init();
+
+        Entity enemy;
+        enemy.init(0, 0, 30, 200);
+        enemyList.push_back(enemy);
+        enemyInit(&enemy, &enemySprites);
         
         Vector2 spawn = map.getSpawnPos();
         player.init(spawn.x, spawn.y, 25, 350);
         playerInit(&player, &playerSprites);
-
-        Vector2 playerPos = player.position;
-        int numEnemies = 1;
-        for (int i = 0; i < numEnemies; i++) {
-        Entity enemy;
-        enemy.type = ENEMY;
-        enemy.init(playerPos.x, playerPos.y, 25, 200);
-        enemyList.push_back(enemy);
-    }
         
         cam.init(&player);
         cam.camera.zoom = map.getMapZoom();
@@ -67,10 +62,11 @@ struct Game {
     }
 
     void update(float dt) {
+
         for (auto iter = projectileList.begin(); iter != projectileList.end(); iter++) {
             int index = std::distance(projectileList.begin(), iter);
 
-            bool alive = projectileList[index].update(&player, map, dt);
+            bool alive = projectileList[index].update(map, dt);
             
             if (!alive) {
                 projectileList.erase(projectileList.begin() + index);
@@ -79,24 +75,11 @@ struct Game {
         }
 
         for (Entity& enemy : enemyList) {
-        enemy.update(&player, map, dt);
-    }
-
-        for (auto iter = enemyList.begin(); iter != enemyList.end(); iter++) {
-            int index = std::distance(enemyList.begin(), iter);
-            if (!index >= 0 || !index < enemyList.size()) break;
-
-            
-            bool alive = enemyList[index].update(&player, map, dt);
-
-            if (!alive) {
-                enemyList.erase(enemyList.begin() + index);
-                iter--;
-            }
-
+            enemy.update(map, dt);
+            basicAI(&enemy, &player, dt);
         }
 
-        player.update(&player, map, dt);
+        player.update(map, dt);
 
         cam.update();
     }

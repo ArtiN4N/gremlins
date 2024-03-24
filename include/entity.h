@@ -11,18 +11,11 @@
 #include "col.hpp"
 #include "map.h"
 
-enum EntityType {
-    PLAYER,
-    ENEMY
-};
-
 struct Entity {
     Vector2 position;
 
     Vector2 moveVelocity;
     Vector2 actionVelocity;
-
-    EntityType type;
 
     float dashTrace;
 
@@ -133,7 +126,7 @@ struct Entity {
         else return tileCollisionSouth(prevPos, iX, iY, foundY, collide);
     }
 
-    bool update(Entity* player, Map map, float dt) {
+    bool update(Map map, float dt) {
         bool ret = attack.update(dir, radius, dt);
 
         Vector2 prevPos = { position.x, position.y };
@@ -158,19 +151,6 @@ struct Entity {
 
         if (dashTrace > 0.f && dashTrace < 50.f) dashTrace = 0.f;
         if (dashTrace < 0.f && dashTrace > -50.f) dashTrace = 0.f;
-
-        if (type == ENEMY) {
-            // Calculate the direction vector from the enemy to the player
-            Vector2 target = player->position;
-
-            // Move the enemy towards the player, but not beyond the enemy's speed
-            moveVelocity = Vector2MoveTowards(position, target, speed * dt);
-
-            // Debug logging
-            std::cout << "Enemy position: (" << position.x << ", " << position.y << ")\n";
-            std::cout << "Player position: (" << target.x << ", " << target.y << ")\n";
-            std::cout << "Enemy move velocity: (" << moveVelocity.x << ", " << moveVelocity.y << ")\n";
-        }
 
         // MAP COLLISION
         Vector2 tileGridTL = {(float) ((int) (position.x - radius) / map.tileSize), (float) ((int) (position.y - radius) / map.tileSize)};

@@ -32,6 +32,8 @@ struct Game {
 
     Viewport cam;
     Texture2D menuImage;
+    Music menuMusic;
+
     
     bool inMainMenu;
 
@@ -83,6 +85,11 @@ struct Game {
         UnloadImage(menuData);
 
         inMainMenu = true;
+
+        InitAudioDevice();
+        menuMusic = LoadMusicStream("assets/sound/music/menutheme.mp3");
+        PlayMusicStream(menuMusic);
+        
 
         //item system
         vix::items_list.push_back(vix::item_driver{ {spawn.x-100, spawn.y-100}, 30 , vix::item_type::COIN});
@@ -334,5 +341,8 @@ struct Game {
         map.unloadMap();
         enemyList.clear();
         map.teardown();
+
+        UnloadMusicStream(menuMusic);
+        CloseAudioDevice();
     }
 };

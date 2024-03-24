@@ -26,6 +26,8 @@ struct Game {
 
     std::vector<Entity> enemyList;
     std::vector<Entity> projectileList;
+
+    //item system
     std::vector<uint32_t> inventory;
 
     void init() {
@@ -48,7 +50,7 @@ struct Game {
 
         inMainMenu = true;
 
-        //test item system
+        //item system
         vix::items_list.push_back(vix::item_driver{ {spawn.x-100, spawn.y-100}, 30 , vix::item_type::COIN});
         vix::items_list.push_back(vix::item_driver{ {spawn.x-200, spawn.y-200}, 20, vix::item_type::COIN });
         vix::items_list.push_back(vix::item_driver{ {spawn.x-300, spawn.y-300}, 25, vix::item_type::COIN });
@@ -121,6 +123,8 @@ struct Game {
             e.draw();
         }
 
+
+        //item system
         size_t items_list_length = vix::items_list.size();
 
         for (size_t i = 0; i<items_list_length; i++) {

@@ -45,6 +45,8 @@ struct Entity {
         dir = NORTH;
 
         player = false;
+
+        tex = NULL;
     }
 
     void initProj(Direction direction) {
@@ -165,7 +167,8 @@ struct Entity {
             int iX = (int) tilesToCheck[i].x;
             int iY = (int) tilesToCheck[i].y;
 
-            if (iX < 0 || iY < 0 || iX >= map.width || iY >= map.height) continue;
+            if (iX < 0 || iY < 0 || iX >= map->width || iY >= map->height) continue;
+
             if (map->mapCollisionData[iY * map->width + iX] == NONE) continue;
             
             Rectangle rec = {(float) (iX * map->tileSize), (float) (iY * map->tileSize), (float) map->tileSize, (float) map->tileSize};
@@ -203,10 +206,8 @@ struct Entity {
         Rectangle destRec = { position.x, position.y - 10, radius * 3, radius * 3 };
         DrawCircleV(position, radius, RED);
         // draw backgroudd img scaled to the screen size
-        DrawTexturePro(drawing, sourceRec, destRec, { radius * 3/2, radius * 3/2 }, 0.f, WHITE);
-
         
-
+        DrawTexturePro(drawing, sourceRec, destRec, { radius * 3/2, radius * 3/2 }, 0.f, WHITE);
 
         attack.debugDraw(position);
     }

@@ -35,13 +35,13 @@ struct Game {
         playerSprites.init();
         enemySprites.init();
 
-        Entity enemy;
-        enemy.init(0, 0, 30, 200);
-        enemyList.push_back(enemy);
-        enemyInit(&enemy, &enemySprites);
-        
         Vector2 spawn = map.getSpawnPos();
 
+        Entity enemy;
+        enemy.init(spawn.x, spawn.y, 30, 400);
+        enemyInit(&enemy, &enemySprites);
+        enemyList.push_back(enemy);
+        
         player.init(spawn.x, spawn.y, 25, 350);
         playerInit(&player, &playerSprites);
         
@@ -73,7 +73,7 @@ struct Game {
         }
 
         for (Entity& enemy : enemyList) {
-            enemy.update(map, dt);
+            enemy.update(&map, dt);
             basicAI(&enemy, &player, dt);
         }
 
@@ -99,6 +99,8 @@ struct Game {
         // draw backgroudd img scaled to the screen size
         DrawTexturePro(mapTex, sourceRec, destRec, (Vector2){ 0, 0 }, 0.0f, WHITE);
 
+        
+
         for (int iY = 0; iY < map.height; iY++) {
             for (int iX = 0; iX < map.width; iX++) {
                 if (map.mapCollisionData[iY * map.width + iX] != NONE) {
@@ -109,6 +111,8 @@ struct Game {
             }
         }
 
+        
+
         for (Entity e : projectileList) {
             e.draw();
         }
@@ -116,6 +120,7 @@ struct Game {
         for (Entity e : enemyList) {
             e.draw();
         }
+
 
         player.draw();
 
@@ -126,7 +131,10 @@ struct Game {
 
     void unload() {
         UnloadTexture(menuImage);
+
         playerSprites.unload();
+        enemySprites.unload();
+
         map.unloadMap();
         map.teardown();
     }

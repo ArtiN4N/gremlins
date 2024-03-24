@@ -35,6 +35,7 @@ struct EnemySprites {
 
 void enemyInit(Entity* enemy, EnemySprites* sprites) {
     enemy->tex = &(sprites->idle[3]);
+    enemy->player = false;
 }
 
 void basicAI(Entity* parent, Entity* target, float dt) {
@@ -47,5 +48,5 @@ void basicAI(Entity* parent, Entity* target, float dt) {
     parent->moveVelocity.x = dir.x * parent->speed;
     parent->moveVelocity.y = dir.y * parent->speed;
 
-    std::cout << parent->moveVelocity.x << ":" << parent->moveVelocity.y << std::endl;
+    
 }

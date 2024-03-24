@@ -68,7 +68,7 @@ struct Game {
 
         for (int iY = 0; iY < NEW_PISKEL_FRAME_HEIGHT; iY++) {
             for (int iX = 0; iX < NEW_PISKEL_FRAME_WIDTH; iX++) {
-                if (!map_data[iY * NEW_PISKEL_FRAME_WIDTH + iX]) {
+                if (map_data[iY * NEW_PISKEL_FRAME_WIDTH + iX]) {
                     DrawRectangle(iX * TILE_SIZE, iY * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
                 }   
             }

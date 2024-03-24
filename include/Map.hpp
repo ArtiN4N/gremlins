@@ -6,7 +6,7 @@
 #define NEW_PISKEL_FRAME_WIDTH 32
 #define NEW_PISKEL_FRAME_HEIGHT 32
 
-#define TILE_SIZE 32
+#define TILE_SIZE 64
 
 /* Piskel data for "New Piskel" */
 

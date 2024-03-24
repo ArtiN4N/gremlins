@@ -49,8 +49,7 @@ namespace vix {
             for (int x = 0; x < width; x++) {
                 //Get pixel color
                 uint32_t pixel = image_data[0][y * width + x];
-                std::cout << (pixel == 0x00000000) << std::endl;
-                map_data[y * width + x] = (pixel == 0x00000000);
+                map_data[y * width + x] = (pixel != 0x00000000);
             }
         }
     }

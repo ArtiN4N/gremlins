@@ -61,6 +61,64 @@ struct Entity {
         }
     }
 
+    bool tileCollisionEast(Vector2* prevPos, int iX, int iY, bool* foundX, bool collide) {
+        if (collide && prevPos->x < (iX * TILE_SIZE) && position.x > (iX * TILE_SIZE) && !*foundX) {
+            position.x = prevPos->x;
+            //prevPos->y = position.y;
+            actionVelocity.x = 0.f;
+            *foundX = true;
+            std::cout << "east collision with pos: " << iX << ":" << iY << std::endl;
+            return true;
+        }
+        return false;
+    }
+
+    bool tileCollisionWest(Vector2* prevPos, int iX, int iY, bool* foundX, bool collide) {
+        if (collide && prevPos->x > (iX * TILE_SIZE) + TILE_SIZE && position.x < (iX * TILE_SIZE) + TILE_SIZE && !*foundX) {
+            position.x = prevPos->x;
+            //prevPos->y = position.y;
+            actionVelocity.x = 0.f;
+            *foundX = true;
+            std::cout << "west collision with pos: " << iX << ":" << iY << std::endl;
+            return true;
+        }
+        return false;
+    }
+
+    bool tileCollisionX(Vector2* prevPos, int iX, int iY, bool* foundX, bool collide) {
+        if ((actionVelocity.x + moveVelocity.x) > 0.f) return tileCollisionEast(prevPos, iX, iY, foundX, collide);
+        else return tileCollisionWest(prevPos, iX, iY, foundX, collide);
+    }
+
+    bool tileCollisionSouth(Vector2* prevPos, int iX, int iY, bool* foundY, bool collide) {
+        if (collide && prevPos->y < (iY * TILE_SIZE) && position.y > (iY * TILE_SIZE) && !*foundY) {
+            position.y = prevPos->y;
+            //prevPos->x = position.x;
+            actionVelocity.y = 0.f;
+            *foundY = true;
+            std::cout << "south collision with pos: " << iX << ":" << iY << std::endl;
+            return true;
+        }
+        return false;
+    }
+
+    bool tileCollisionNorth(Vector2* prevPos, int iX, int iY, bool* foundY, bool collide) {
+        if (collide && prevPos->y > (iY * TILE_SIZE) + TILE_SIZE && position.y < (iY * TILE_SIZE) + TILE_SIZE && !*foundY) {
+            position.y = prevPos->y;
+            //prevPos->x = position.x;
+            actionVelocity.y = 0.f;
+            *foundY = true;
+            std::cout << "north collision with pos: " << iX << ":" << iY << std::endl;
+            return true;
+        }
+        return false;
+    }
+
+    bool tileCollisionY(Vector2* prevPos, int iX, int iY, bool* foundY, bool collide) {
+        if ((actionVelocity.y + moveVelocity.y) < 0.f) return tileCollisionNorth(prevPos, iX, iY, foundY, collide);
+        else return tileCollisionSouth(prevPos, iX, iY, foundY, collide);
+    }
+
     bool update(bool map_data[1024], float dt) {
         bool ret = attack.update(dir, radius, dt);
 
@@ -83,65 +141,46 @@ struct Entity {
         if (dashTrace > 0.f && dashTrace < 50.f) dashTrace = 0.f;
         if (dashTrace < 0.f && dashTrace > -50.f) dashTrace = 0.f;
         
-        for (int iY = 0; iY < NEW_PISKEL_FRAME_HEIGHT; iY++) {
-            for (int iX = 0; iX < NEW_PISKEL_FRAME_WIDTH; iX++) {
-                if (!map_data[iY * NEW_PISKEL_FRAME_WIDTH + iX]) continue;
-                bool collide = vix::check_collision_circle_rec_this(position, radius, rec);
+        // MAP COLLISION
+        Vector2 tileGridTL = {(float) ((int) (position.x - radius) / TILE_SIZE), (float) ((int) (position.y - radius) / TILE_SIZE)};
+        Vector2 tileGridTR = {(float) ((int) (position.x + radius) / TILE_SIZE), (float) ((int) (position.y - radius) / TILE_SIZE)};
+        Vector2 tileGridBL = {(float) ((int) (position.x - radius) / TILE_SIZE), (float) ((int) (position.y + radius) / TILE_SIZE)};
+        Vector2 tileGridBR = {(float) ((int) (position.x + radius) / TILE_SIZE), (float) ((int) (position.y + radius) / TILE_SIZE)};
 
-                Rectangle rec = {iX * TILE_SIZE, iY * TILE_SIZE, TILE_SIZE, TILE_SIZE};
-                
+        Vector2 tilesToCheck[] = { tileGridTL, tileGridTR, tileGridBL, tileGridBR };
 
-                if (collide && prevPos.x > (iX * TILE_SIZE) + TILE_SIZE && position.x < (iX * 32) + 32) {
-                    position.x = prevPos.x;
-                }
+        bool foundX = false;
+        bool foundY = false;
 
-                if (collide && prevPos.x < (iX * TILE_SIZE) && position.x > (iX * TILE_SIZE)) {
-                    position.x = prevPos.x;
-                }
+        std::cout << std::endl;
+        for (int i = 0; i < 4; i++) {
+            
+            int iX = (int) tilesToCheck[i].x;
+            int iY = (int) tilesToCheck[i].y;
+
+            if (!map_data[iY * NEW_PISKEL_FRAME_WIDTH + iX]) continue;
+            
+            Rectangle rec = {(float) (iX * TILE_SIZE), (float) (iY * TILE_SIZE), TILE_SIZE, TILE_SIZE};
+
+            bool collide = vix::check_collision_circle_rec_this(position, radius, rec);
+
+            if (!collide) continue;
+            
+            if (dir == EAST || dir == WEST) {
+                if (tileCollisionX(&prevPos, iX, iY, &foundX, collide)) continue;
+                if (tileCollisionY(&prevPos, iX, iY, &foundY, collide)) continue;
+            } else {
+                if (tileCollisionY(&prevPos, iX, iY, &foundY, collide)) continue;
+                if (tileCollisionX(&prevPos, iX, iY, &foundX, collide)) continue;
             }
+            
+            
         }
-        /*
-        //Draw bounding box objects
-        size_t length = 1024;
-
-        // prevposition - indecies
-        // ig it depends on map tile size
-        // lets say theyre 25 * 25
-        Vector2 prevPosToMap = { (int) prevPos.x / TILE_SIZE, (int) prevPos.y / TILE_SIZE };
-        Vector2 posToMap = { (int) position.x / TILE_SIZE, (int) position.y / TILE_SIZE };
-
-        std::cout << prevPos.x << ":" << position.x << ":" << 2 * TILE_SIZE << std::endl;
-
-        for (size_t i = 0; i < length; i++) {
-            //convert i to 2d
-            size_t iX = i % NEW_PISKEL_FRAME_WIDTH;
-            size_t iY = i / NEW_PISKEL_FRAME_HEIGHT;
-
-            if (prevPos.x > (iX * TILE_SIZE) + TILE_SIZE && position.x < (iX * 32) + 32 && position.y > (iY * 32) && position.y < (iX * 32) + 32) {
-                actionVelocity.x = 0.f;
-                position.x = prevPos.x;
-            }
-
-            if (prevPos.x < (iX * TILE_SIZE) && position.x > (iX * TILE_SIZE) && position.y > (iY * 32) && position.y < (iX * 32) + 32) {
-                actionVelocity.x = 0.f;
-                position.x = prevPos.x;
-            }
-            
-            
-
-            //new_piskel_data[0][i]; // color value
-            
-        }*/
 
         return ret;
     }
 
     void draw() {
-        Vector2 posToMap = { (int) position.x / TILE_SIZE, (int) position.y / TILE_SIZE };
-        std::cout << "tile = " << posToMap.x << ":" << posToMap.y << std::endl;
-
-        //DrawRectangle();
-
         DrawCircleV(position, radius, RED);
         attack.debugDraw(position);
     }
